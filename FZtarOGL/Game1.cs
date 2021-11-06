@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FZtarOGL.Asset;
+using FZtarOGL.Profiler;
 using FZtarOGL.Screen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,7 +45,7 @@ namespace FZtarOGL
             GameTitle = "FZtar";
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = false;
+            IsMouseVisible = true;
         }
 
         protected override void Initialize()
@@ -222,9 +223,21 @@ namespace FZtarOGL
                 new Vector2(fboScaleWidth, fboScaleHeight),
                 SpriteEffects.None, 0);
             _spriteBatch.End();
-            
+
+            // Update profiler stats
             if (gs.DebugRenderDebugGui)
+            {
+                ProfilerStats.DrawCalls = _graphics.GraphicsDevice.Metrics.DrawCount;
+                ProfilerStats.ClearCalls = _graphics.GraphicsDevice.Metrics.ClearCount;
+                ProfilerStats.TargetSwitches = _graphics.GraphicsDevice.Metrics.TargetCount;
+                ProfilerStats.TextureSwitches = _graphics.GraphicsDevice.Metrics.TextureCount;
+                ProfilerStats.FragmentShaderSwitches = _graphics.GraphicsDevice.Metrics.PixelShaderCount;
+                ProfilerStats.VertexShaderSwitches = _graphics.GraphicsDevice.Metrics.VertexShaderCount;
+                ProfilerStats.PrimitivesDrawn = _graphics.GraphicsDevice.Metrics.PrimitiveCount;
+                ProfilerStats.SpritesDrawn = _graphics.GraphicsDevice.Metrics.SpriteCount;
+                
                 _screenManager.GameScreens.First().DrawDebugGUI(gameTime);
+            }
 
             base.Draw(gameTime);
 

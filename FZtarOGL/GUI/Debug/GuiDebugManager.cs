@@ -25,7 +25,7 @@ namespace FZtarOGL.GUI.Debug
         
         public void Tick()
         {
-            _elementGameStats.Tick(_game.ScreenManager.GameScreens.Count, _screen._Entities.Count);
+            _elementGameStats.Tick(_game.ScreenManager.GameScreens.Count, _screen._Entities.Count, _screen.BoxfCount, _screen.CurrentLevel.VirtualTravelDistance1);
             _elementProfiler.Tick(_game.LastFps, _game.LastUps, _game.DeltaTime);
         }
     }

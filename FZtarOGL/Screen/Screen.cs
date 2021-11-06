@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using FZtarOGL.Asset;
+using FZtarOGL.Box;
+using FZtarOGL.Camera;
+using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,7 +15,20 @@ namespace FZtarOGL.Screen
         protected AssetManager AssMan;
         protected SpriteBatch SpriteBatch;
 
+        public readonly GraphicsDevice GraphicsDevice;
+
+        protected PerspectiveCamera Cam3d;
+
         protected List<Entity.Entity> Entities;
+
+        public Level.Level CurrentLevel;
+
+        protected BasicEffect BoundingBoxesDrawEffect;
+
+        public List<BoundingBoxFiltered> BoundingBoxesFiltered;
+        private int boxfCount;
+
+        public int BoxfCount => boxfCount;
 
         public Screen(Game1 game, AssetManager assMan, SpriteBatch spriteBatch)
         {
@@ -20,11 +36,54 @@ namespace FZtarOGL.Screen
             AssMan = assMan;
             SpriteBatch = spriteBatch;
 
+            GraphicsDevice = Game.GraphicsDevice;
+
             Entities = new List<Entity.Entity>();
+            BoundingBoxesFiltered = new List<BoundingBoxFiltered>();
+
+            // put colliderflag and mask inside a new class containing a boundingBox.
+            //BoundingBox b = new BoundingBox();
+            //b.
+
+            BoundingBoxesDrawEffect = new BasicEffect(game.GraphicsDevice);
+            BoundingBoxesDrawEffect.LightingEnabled = false;
+            BoundingBoxesDrawEffect.TextureEnabled = false;
+            BoundingBoxesDrawEffect.VertexColorEnabled = true;
+            BoundingBoxesDrawEffect.Alpha = 1;
         }
 
         public abstract void Input(GameTime gt, float dt);
         public abstract void Tick(GameTime gt, float dt);
+
+        public void CheckCollisions(List<BoundingBoxFiltered> boxesFiltered, float dt)
+        {
+            // 1. Add boxes first, Entitiy -> screen -> list.add.
+            Console.WriteLine("#boxes: " + boxesFiltered.Count);
+            // 2. do something
+            foreach (var boxf1 in boxesFiltered)
+            {
+                foreach (var boxf2 in boxesFiltered)
+                {
+                    bool isSameBox = boxf1 == boxf2;
+                    if (!isSameBox)
+                    {
+                        bool containsBit = (boxf1.Mask & boxf2.Filter) == boxf2.Filter;
+                        if (containsBit)
+                        {
+                            if (boxf1.Box.Intersects(boxf2.Box))
+                            {
+                                boxf1.Parent.OnCollision(boxf2.Filter, dt);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //clear
+            boxfCount = boxesFiltered.Count;
+            BoundingBoxesFiltered.Clear();
+        }
+
         public abstract void Draw(float dt);
 
         public abstract void DrawGUI(float dt);
@@ -39,13 +98,48 @@ namespace FZtarOGL.Screen
             }
         }
 
-        protected void DrawAllEntities(float dt)
+        protected void Draw2DAllEntities(float dt)
         {
             foreach (var entity in Entities)
             {
-                entity.Draw(dt);
+                entity.Draw2D(dt);
             }
         }
+
+        protected void Draw3DAllEntities(float dt)
+        {
+            foreach (var entity in Entities)
+            {
+                entity.Draw3D(dt);
+            }
+        }
+
+        protected void DrawBoundingBoxes()
+        {
+            foreach (var entity in Entities)
+            {
+                entity.DrawBoundingBox();
+            }
+        }
+
+        public abstract void DrawModel(Model model, Matrix modelTransform);
+
+        // Initialize an array of indices for the box. 12 lines require 24 indices
+        protected short[] bBoxIndices =
+        {
+            0, 1, 1, 2, 2, 3, 3, 0, // Front edges
+            4, 5, 5, 6, 6, 7, 7, 4, // Back edges
+            0, 4, 1, 5, 2, 6, 3, 7 // Side edges connecting front and back
+        };
+
+        public abstract void DrawBoundingBox(List<BoundingBox> boundingBoxes, Matrix modelTransform);
+
+        public abstract void DrawBoundingBoxFiltered(List<BoundingBoxFiltered> boundingBoxesFiltered,
+            Matrix modelTransform);
+
+        public abstract void DrawModelUnlit(Model model, Matrix modelTransform);
+
+        public abstract void DrawModelUnlitWithColor(Model model, Matrix modelTransform, Vector3 unlitColor);
 
         protected void RemoveAllEntities()
         {

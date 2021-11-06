@@ -15,8 +15,14 @@ namespace FZtarOGL.Entity
         }
 
         public abstract void Tick(float dt);
+        
+        public abstract void OnCollision(int filter, float dt);
 
-        public abstract void Draw(float dt);
+        public abstract void Draw2D(float dt);
+        
+        public abstract void Draw3D(float dt);
+        
+        public abstract void DrawBoundingBox();
 
         public virtual void Destroy()
         {
