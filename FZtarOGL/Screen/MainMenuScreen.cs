@@ -162,29 +162,50 @@ namespace FZtarOGL.Screen
 
             _playerShip.Input(gt, dt);
 
+            const float camMaxRotNonLocalAngle = 0.05f;
+            float thisRot = 0;
+            bool rotChanged = false;
+            float rotBoost = 0.2f; // 0.15f
+            
             if (KeyboardExtended.GetState().IsKeyDown(Keys.W))
             {
-                //_cam3d.NonLocalRotateUpOrDown(gt, camUpRotYSpeed);
+                //Cam3d.NonLocalRotateUpOrDown(gt, camUpRotYSpeed); // no
+                thisRot = -camSpeedY * rotBoost * dt;
+                Cam3d.NonLocalRotateUpOrDown(gt, thisRot);
+                rotChanged = true;
 
                 //cam3dPos.Z -= camSpeed * dt;
                 cam3dPos.Y += camSpeedY * dt;
+                
+                CurrentLevel.BackgroundPos.Y += camSpeedY * 3.05f * dt;
+                // limit it later
+                // if not pressed
+                // go back just as fast.
             }
 
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.S))
             {
-                //_cam3d.NonLocalRotateUpOrDown(gt, -camUpRotYSpeed);
+                //Cam3d.NonLocalRotateUpOrDown(gt, -camUpRotYSpeed); // no
+                thisRot = camSpeedY * rotBoost * dt;
+                Cam3d.NonLocalRotateUpOrDown(gt, thisRot);
+                rotChanged = true;
 
                 //cam3dPos.Z += camSpeed * dt;
                 cam3dPos.Y -= camSpeedY * dt;
+                
+                CurrentLevel.BackgroundPos.Y -= camSpeedY * 3.05f * dt;
+                // limit it later
+                // if not pressed
+                // go back just as fast.
             }
-
-            // limit camera pos Y
-            if (cam3dPos.Y > camPosMaxY)
-                cam3dPos.Y = camPosMaxY;
-
-            if (cam3dPos.Y < camPosMinY)
-                cam3dPos.Y = camPosMinY;
+            
+            //Console.WriteLine();
+            
+            //Console.WriteLine(CurrentLevel.BackgroundPos.Y);
+            //Console.WriteLine(Cam3d.Forward.Y);
+            
+            // BUG: EDGES ROT Y
 
             //cam3dPos.Z -= camSpeedZ * dt;
 
@@ -202,6 +223,7 @@ namespace FZtarOGL.Screen
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
             {
+                // BUG: No limit, does not set minimum rotation: just stops rotating.
                 if (Cam3d.Up.X >= camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d.Up.X);
                 else Cam3d.RotateRollClockwise(gt, camRotRollSpeed);
 
@@ -210,6 +232,27 @@ namespace FZtarOGL.Screen
 
                 //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
             }
+            
+            // limit camera pos Y
+            if (cam3dPos.Y > camPosMaxY)
+            {
+                if (rotChanged)
+                    Cam3d.NonLocalRotateUpOrDown(gt, -thisRot);
+                
+                cam3dPos.Y = camPosMaxY;
+                CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
+            }
+
+            if (cam3dPos.Y < camPosMinY)
+            {
+                if (rotChanged)
+                    Cam3d.NonLocalRotateUpOrDown(gt, -thisRot);
+                
+                cam3dPos.Y = camPosMinY;
+                CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
+            }
+            
+            Console.WriteLine(Cam3d.Forward.Y);
 
             // BUG: Dont use this. This is what is causing the stuttering witch the cam/playership when moving the playership.
             // BUG: Solution: Dont check distance as a vector, just compare playership X with cam X.
@@ -229,14 +272,14 @@ namespace FZtarOGL.Screen
                 }
             }*/
 
-            float maxDistX = 1.5f;
-            float distanceX = _playerShip.ModelPos.X - cam3dPos.X;
-            if (distanceX < -maxDistX)
+            float maxDistXCamPlayerShip = 1.5f;
+            float distanceXCamPlayerShip = _playerShip.ModelPos.X - cam3dPos.X;
+            if (distanceXCamPlayerShip < -maxDistXCamPlayerShip)
             {
                 cam3dPos.X -= camSpeedX * dt;
                 //bgPos.X -= camSpeedX * 3.3f * dt;
             }
-            else if (distanceX > maxDistX)
+            else if (distanceXCamPlayerShip > maxDistXCamPlayerShip)
             {
                 cam3dPos.X += camSpeedX * dt;
                 //bgPos.X += camSpeedX * 3.3f * dt;
@@ -278,13 +321,13 @@ namespace FZtarOGL.Screen
             if (cam3dPos.X < -camPosMaxX)
             {
                 cam3dPos.X = -camPosMaxX;
-                CurrentLevel.KeepOldBackgroundPosition();
+                CurrentLevel.KeepOldBackgroundPositionX();
             }
 
             if (cam3dPos.X > camPosMaxX)
             {
                 cam3dPos.X = camPosMaxX;
-                CurrentLevel.KeepOldBackgroundPosition();
+                CurrentLevel.KeepOldBackgroundPositionX();
             }
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.Z))
@@ -314,13 +357,13 @@ namespace FZtarOGL.Screen
             if (KeyboardExtended.GetState().IsKeyDown(Keys.R))
             {
                 //_cam3d.RotateUpOrDown(gt, 1);
-                Cam3d.NonLocalRotateUpOrDown(gt, 1);
+                //Cam3d.NonLocalRotateUpOrDown(gt, 1);
             }
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.T))
             {
                 //_cam3d.RotateUpOrDown(gt, -1);
-                Cam3d.NonLocalRotateUpOrDown(gt, -1);
+                //Cam3d.NonLocalRotateUpOrDown(gt, -1);
             }
 
             Cam3d.Position = cam3dPos;
@@ -328,6 +371,8 @@ namespace FZtarOGL.Screen
             oldCam3dUp = Cam3d.Up;
             //bgPosOld = bgPos;
 
+            
+            
             // old code
             const float radius = 100;
             _newPosX += (float)Math.Cos(MathHelper.ToRadians(_acc)) * radius * dt;
@@ -404,12 +449,12 @@ namespace FZtarOGL.Screen
             }
 
             // For debugging - red line at end
-            /*Vector3 startPoint = new Vector3(-10, 0, -60);
-            Vector3 endPoint = new Vector3(10, 0, -60);
+            Vector3 startPoint = new Vector3(-10, 0, -200);
+            Vector3 endPoint = new Vector3(10, 0, -200);
             basicEffectPrimitives.VertexColorEnabled = true;
             basicEffectPrimitives.CurrentTechnique.Passes[0].Apply();
             var vertices2 = new[] { new VertexPositionColor(startPoint, Color.Red),  new VertexPositionColor(endPoint, Color.Red) };
-            _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices2, 0, 1);*/
+            _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices2, 0, 1);
 
             Draw3DAllEntities(dt);
             

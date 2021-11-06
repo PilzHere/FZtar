@@ -22,7 +22,7 @@ namespace FZtarOGL.Level
 
         protected Texture2D BackgroundTexture;
         public Vector2 BackgroundPos;
-        protected Vector2 BackgroundPosOld;
+        public Vector2 BackgroundPosOld;
         protected Vector2 BackgroundPosInt;
         protected Vector2 BackgroundOrigin;
         protected Vector3 FogColor1;
@@ -50,6 +50,16 @@ namespace FZtarOGL.Level
         public void KeepOldBackgroundPosition()
         {
             BackgroundPos = BackgroundPosOld;
+        }
+        
+        public void KeepOldBackgroundPositionX()
+        {
+            BackgroundPos.X = BackgroundPosOld.X;
+        }
+        
+        public void KeepOldBackgroundPositionY()
+        {
+            BackgroundPos.Y = BackgroundPosOld.Y;
         }
     }
 }

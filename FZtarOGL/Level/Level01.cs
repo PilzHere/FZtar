@@ -20,7 +20,7 @@ namespace FZtarOGL.Level
             FogEnd1 = 200;
 
             const float backgroundPosOffsetX = 128;
-            const float backgroundPosOffsetY = 11;
+            const float backgroundPosOffsetY = 11 - 2; // was 11
             BackgroundPos = new Vector2(backgroundPosOffsetX, backgroundPosOffsetY);
             BackgroundPosInt = new Vector2((int)BackgroundPos.X, (int)BackgroundPos.Y);
             BackgroundOrigin = new Vector2(256, 256);
