@@ -11,11 +11,10 @@
 #-------------------------------- References --------------------------------#
 
 #Linux
-/reference:../../../../.nuget/packages/monogame.extended.content.pipeline/3.8.0/tools/MonoGame.Extended.Content.Pipeline.dll
+#/reference:../../../../.nuget/packages/monogame.extended.content.pipeline/3.8.0/tools/MonoGame.Extended.Content.Pipeline.dll
 
 #Windows
-#/reference:C:/Users/pilzm/.nuget/packages/monogame.extended.content.pipeline/3.8.0/tools/MonoGame.Extended.Content.Pipeline.dll
-#/reference:../../../../../../.nuget/packages/monogame.extended.content.pipeline/3.8.0/tools/MonoGame.Extended.Content.Pipeline.dll
+/reference:../../../../.nuget/packages/monogame.extended.content.pipeline/3.8.0/tools/MonoGame.Extended.Content.Pipeline.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -150,10 +149,44 @@
 /processorParam:TextureFormat=NoChange
 /build:models/tower01.fbx
 
-#begin fonts/font01_32.fnt
+#begin fonts/font01_08.fnt
 /importer:BitmapFontImporter
 /processor:BitmapFontProcessor
 /build:fonts/font01_32.fnt
+
+#begin fonts/font01_08_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font01_08_0.png
+
+#begin fonts/font01_08.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font01_08.fnt
+
+#begin fonts/font01_16_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font01_16_0.png
+
+#begin fonts/font01_16.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font01_16.fnt
 
 #begin fonts/font01_32_0.png
 /importer:TextureImporter
@@ -166,6 +199,40 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:fonts/font01_32_0.png
+
+#begin fonts/font02_08.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font02_08.fnt
+
+#begin fonts/font02_08_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font02_08_0.png
+
+#begin fonts/font02_16.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font02_16.fnt
+
+#begin fonts/font02_16_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font02_16_0.png
 
 #begin fonts/font02_32.fnt
 /importer:BitmapFontImporter
