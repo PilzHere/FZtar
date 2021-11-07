@@ -40,7 +40,8 @@ namespace FZtarOGL.Screen
 
         private PlayerShip _playerShip;
 
-        private BitmapFont _fontFat16;
+        private BitmapFont _font01_32;
+        private BitmapFont _font02_32;
 
         public MainMenuScreen(Game1 game, AssetManager assMan, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice) :
             base(game, assMan, spriteBatch)
@@ -52,26 +53,8 @@ namespace FZtarOGL.Screen
             bg01 = assMan.LoadAsset<Texture2D>("textures/bg01");
             floorModel = assMan.LoadAsset<Model>("models/floor");
             
-            // TODO: Ladda ner BMFont på Windows laptop
-            // Ladda ner fonts
-            // convertera fonts
-            // spara
-            // ladda med content.mgcb
-            // ?
-            // profit
-            
-            // Content.mgcb
-            /*#begin fonts/font01_16.fnt
-            /importer:BMFontImporter
-            /processor:BMFontProcessor
-            /build:fonts/font01_16.fnt
-
-            #begin fonts/fat16.fnt
-            /importer:BitmapFontImporter
-            /processor:BitmapFontProcessor
-            /build:fonts/fat16.fnt*/
-            
-            //_fontFat16 = assMan.LoadAsset<BitmapFont>("fonts/fat16");
+            _font01_32 = assMan.LoadAsset<BitmapFont>("fonts/font01_32");
+            _font02_32 = assMan.LoadAsset<BitmapFont>("fonts/font02_32");
 
             var viewportAdapter = new BoxingViewportAdapter(game.Window, _graphicsDevice, 256, 224);
             _camera = new OrthographicCamera(viewportAdapter);
@@ -459,17 +442,6 @@ namespace FZtarOGL.Screen
             Draw3DAllEntities(dt);
             
             if (GameSettings.GameSettings.DebugRenderBoundingBoxes) DrawBoundingBoxes();
-
-            if (_playerShip != null)
-            {
-                SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp,
-                    DepthStencilState.None, RasterizerState.CullCounterClockwise,
-                    null, _camera.GetViewMatrix());
-
-                _playerShip.DrawAim(dt);
-
-                SpriteBatch.End();
-            }
         }
 
         public override void DrawModel(Model model, Matrix modelTransform)
@@ -629,6 +601,19 @@ namespace FZtarOGL.Screen
 
         public override void DrawGUI(float dt)
         {
+            if (_playerShip != null)
+            {
+                SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp,
+                    DepthStencilState.None, RasterizerState.CullCounterClockwise,
+                    null, _camera.GetViewMatrix());
+
+                _playerShip.DrawAim(dt);
+                
+                SpriteBatch.DrawString(_font01_32, "Hello...", new Vector2(50, 50), Color.White);
+                SpriteBatch.DrawString(_font02_32, "...World!", new Vector2(50, 100), Color.White);
+
+                SpriteBatch.End();
+            }
         }
 
         public override void DrawDebugGUI(GameTime gt)
