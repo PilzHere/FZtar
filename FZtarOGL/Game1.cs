@@ -119,7 +119,7 @@ namespace FZtarOGL
         protected override void LoadContent()
         {
             _assMan = new AssetManager(Content);
-            _assMan.LoadBasicAssets();
+            _assMan.LoadAllAssets();
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -130,7 +130,7 @@ namespace FZtarOGL
             _fboTexture = _fbo;
 
             _screenManager = new ScreenManager();
-            _screenManager.AddScreen(new MainMenuScreen(this, _assMan, _spriteBatch, GraphicsDevice/*, _debugGuiRenderer*/));
+            _screenManager.AddScreen(new PlayScreen(this, _assMan, _spriteBatch, GraphicsDevice/*, _debugGuiRenderer*/));
         }
         
         private void UpdateRunTime(GameTime gameTime)
@@ -235,6 +235,7 @@ namespace FZtarOGL
                 ProfilerStats.VertexShaderSwitches = _graphics.GraphicsDevice.Metrics.VertexShaderCount;
                 ProfilerStats.PrimitivesDrawn = _graphics.GraphicsDevice.Metrics.PrimitiveCount;
                 ProfilerStats.SpritesDrawn = _graphics.GraphicsDevice.Metrics.SpriteCount;
+                ProfilerStats.ModelsDrawn = _screenManager.GameScreens.First().ModelsDrawn;
                 
                 _screenManager.GameScreens.First().DrawDebugGUI(gameTime);
             }

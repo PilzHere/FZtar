@@ -13,5 +13,7 @@ namespace FZtarOGL.Profiler
         
         public static long PrimitivesDrawn;
         public static long SpritesDrawn;
+
+        public static long ModelsDrawn;
     }
 }

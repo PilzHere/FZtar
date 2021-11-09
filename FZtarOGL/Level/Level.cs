@@ -1,7 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using FZtarOGL.Asset;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
+using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Sprites;
 
 namespace FZtarOGL.Level
@@ -11,7 +15,9 @@ namespace FZtarOGL.Level
         protected Screen.Screen Screen;
         protected SpriteBatch SpriteBatch;
         protected AssetManager AssMan;
-        
+
+        protected Song levelSong;
+
         public float VirtualSpeedZ = 33; // Everything moves with this!
         protected float VirtualSpeedZMax = 33;
         protected float VirtualSpeedBoostZMax = 66;
@@ -27,7 +33,19 @@ namespace FZtarOGL.Level
         protected Vector2 BackgroundOrigin;
         protected Vector3 FogColor1;
         protected float FogStart1; // Z units from cam
-        protected float FogEnd1; // // Z units from cam
+        protected float FogEnd1; // Z units from cam
+
+        protected bool displayMessage;
+        protected Texture2D messageAvatar;
+        protected float avatarScaleX;
+        protected float avatarScaleY;
+        protected String message;
+        protected float messageCooldown = 0.5f;
+        protected float messageTimer;
+
+        protected List<Message.Message> Messages1;
+
+        public List<Message.Message> Messages => Messages1;
 
         public Vector3 FogColor => FogColor1;
         public float FogStart => FogStart1;
@@ -38,11 +56,44 @@ namespace FZtarOGL.Level
             Screen = screen;
             AssMan = assMan;
             SpriteBatch = spriteBatch;
+
+            Messages1 = new List<Message.Message>();
         }
 
         public virtual void Tick(GameTime gt, float dt)
         {
             VirtualTravelDistance += VirtualSpeedZ * dt;
+
+            if (Messages.Count > 0)
+            {
+                messageTimer += dt;
+
+                if (messageTimer >= messageCooldown)
+                {
+                    if (Messages1[0].Remove)
+                    {
+                        Messages1.RemoveAt(0);
+                        messageTimer = 0;
+                    }
+                    else
+                    {
+                        Messages1[0].Tick(dt);
+                    }
+                }
+            }
+
+            Console.WriteLine(messageTimer);
+        }
+
+        public void DrawMessage(SpriteBatch sb, float dt)
+        {
+            if (Messages.Count > 0)
+            {
+                if (messageTimer >= messageCooldown)
+                {
+                    Messages1[0].Draw(sb, dt);
+                }
+            }
         }
 
         public abstract void DrawBackground(float dt, float rotation);
@@ -51,12 +102,12 @@ namespace FZtarOGL.Level
         {
             BackgroundPos = BackgroundPosOld;
         }
-        
+
         public void KeepOldBackgroundPositionX()
         {
             BackgroundPos.X = BackgroundPosOld.X;
         }
-        
+
         public void KeepOldBackgroundPositionY()
         {
             BackgroundPos.Y = BackgroundPosOld.Y;

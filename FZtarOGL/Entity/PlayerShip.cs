@@ -26,6 +26,13 @@ namespace FZtarOGL.Entity
         private Vector2 _aimPos2dInt;
         private Vector3 _aimPos3d;
 
+        private int _maxHp = 50;
+        private int _hp;
+        private int _maxPower = 50;
+        private int _power;
+
+        public int Hp => _hp;
+        public int Power => _power;
         public Model Model => _model;
 
         //private BoundingBox _box;
@@ -69,8 +76,8 @@ namespace FZtarOGL.Entity
             _cam = cam;
             _assMan = assMan;
 
-            _aimTex = _assMan.LoadAsset<Texture2D>("textures/aim");
-            _model = _assMan.LoadAsset<Model>("models/playerShip");
+            _aimTex = assMan.PlayerAimTex;
+            _model = assMan.PlayerShipModel;
 
             ModelPos = position;
             ModelScale = new Vector3(1, 1, 1);
@@ -81,6 +88,9 @@ namespace FZtarOGL.Entity
                          Matrix.CreateTranslation(ModelPos);
 
             _viewport = new Viewport(0, 0, 256, 224);
+
+            _hp = _maxHp;
+            _power = _maxPower;
 
             // Boundingboxes, one huge from all meshes min/max combined.
             boxfes = new List<BoundingBoxFiltered>();
@@ -100,7 +110,7 @@ namespace FZtarOGL.Entity
             // test
             Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
             Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.filterPlayerShip, BoxFilters.maskPlayerShip);
+            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerShip, BoxFilters.MaskPlayerShip);
             
             //BoundingSphere sphere = BoundingSphere.CreateFromPoints(_model.Meshes[0].BoundingSphere);
             //BoundingBox box = BoundingBox.CreateFromSphere(_model.Meshes[0].BoundingSphere);
@@ -287,10 +297,43 @@ namespace FZtarOGL.Entity
 
         public override void OnCollision(int filter, float dt)
         {
-            if (filter == BoxFilters.filterTower)
+            switch (filter)
             {
-                Console.WriteLine("PLAYERSHIP HIT");                
+                case BoxFilters.FilterTower:
+                    TakeDamage(5);
+                    Console.WriteLine("PLAYERSHIP HIT");
+                    break;
+                case BoxFilters.FilterRingHealth:
+                    Heal(10);
+                    break;
+                case BoxFilters.FilterRingPower:
+                    IncreasePower(10);
+                    break;
             }
+        }
+
+        private void Heal(int amount)
+        {
+            if (_hp < _maxHp) _hp += amount;
+            if (_hp > _maxHp) _hp = _maxHp;
+        }
+        
+        private void TakeDamage(int amount)
+        {
+            if (_hp > 0) _hp -= amount;
+            if (_hp < 0) _hp = 0;
+        }
+        
+        private void IncreasePower(int amount)
+        {
+            if (_power < _maxPower) _power += amount;
+            if (_power > _maxPower) _power = _maxPower;
+        }
+        
+        private void ReducePower(int amount)
+        {
+            if (_power > 0) _power -= amount;
+            if (_power < 0) _power = 0;
         }
 
         public override void Draw2D(float dt)

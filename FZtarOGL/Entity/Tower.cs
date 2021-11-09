@@ -40,7 +40,7 @@ namespace FZtarOGL.Entity
             _screen = screen;
             _assMan = assMan;
 
-            _model = _assMan.LoadAsset<Model>("models/tower01");
+            _model = _assMan.TowerModel;
 
             ModelScale = Vector3.One;
             ModelRot = Vector3.Zero;
@@ -71,7 +71,7 @@ namespace FZtarOGL.Entity
             // Remember to switch Z with Y! because wrong in blender!
             Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
             Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.filterTower, BoxFilters.maskTower);
+            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterTower, BoxFilters.MaskTower);
             
             boxfes.Add(boxf);
         }
@@ -116,10 +116,10 @@ namespace FZtarOGL.Entity
         {
             switch (filter)
             {
-                case BoxFilters.filterPlayerShip:
+                case BoxFilters.FilterPlayerShip:
                     //Console.WriteLine("TOWER HIT");                    
                     break;
-                case BoxFilters.filterPlayerRay:
+                case BoxFilters.FilterPlayerRay:
                     //ToDestroy = true;
                     break;
             }

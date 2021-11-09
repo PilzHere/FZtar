@@ -9,6 +9,7 @@ namespace FZtarOGL.GUI.Debug.Element
     {
         private uint _fps, _ups;
         private float _dt;
+        private long _modelsDrawn;
 
         protected override void CustomRender()
         {
@@ -32,6 +33,7 @@ namespace FZtarOGL.GUI.Debug.Element
             ImGui.Text("Fragment: " + Profiler.ProfilerStats.FragmentShaderSwitches);
             ImGui.Text("\nShapes drawn");
             ImGui.Text("Sprites drawn: " + Profiler.ProfilerStats.SpritesDrawn);
+            ImGui.Text("Models drawn: " + _modelsDrawn);
             ImGui.Text("Primitives drawn: " + Profiler.ProfilerStats.PrimitivesDrawn);
             
             ImGui.Button("Render bounding boxes");
@@ -44,11 +46,12 @@ namespace FZtarOGL.GUI.Debug.Element
             ImGui.End();
         }
 
-        public void Tick(uint fps, uint ups, float dt)
+        public void Tick(uint fps, uint ups, float dt, long modelsDrawn)
         {
             _fps = fps;
             _ups = ups;
             _dt = dt;
+            _modelsDrawn = modelsDrawn;
         }
     }
 }

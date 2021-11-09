@@ -27,7 +27,7 @@ namespace FZtarOGL.Entity
             _screen = screen;
             _assMan = assMan;
 
-            _model = _assMan.LoadAsset<Model>("models/cubeFbx");
+            _model = _assMan.CubeModel;
 
             ModelScale = Vector3.One;
             ModelRot = Vector3.Zero;

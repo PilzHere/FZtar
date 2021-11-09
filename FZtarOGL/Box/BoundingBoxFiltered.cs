@@ -18,8 +18,17 @@ namespace FZtarOGL.Box
 
         public Entity.Entity Parent => _parent;
 
-        public int Filter => _filter;
-        public int Mask => _mask;
+        public int Filter
+        {
+            get => _filter;
+            set => _filter = value;
+        }
+
+        public int Mask
+        {
+            get => _mask;
+            set => _mask = value;
+        }
 
         public BoundingBoxFiltered(Entity.Entity parent, Vector3 min, Vector3 max, int filter, int mask)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Camera;
@@ -15,9 +16,15 @@ namespace FZtarOGL.Screen
         protected AssetManager AssMan;
         protected SpriteBatch SpriteBatch;
 
+        protected long _modelsDrawn;
+
+        public long ModelsDrawn => _modelsDrawn;
+
         public readonly GraphicsDevice GraphicsDevice;
 
-        protected PerspectiveCamera Cam3d;
+        protected PerspectiveCamera Cam3d1;
+
+        public PerspectiveCamera Cam3d => Cam3d1;
 
         protected List<Entity.Entity> Entities;
 
@@ -30,6 +37,10 @@ namespace FZtarOGL.Screen
 
         public int BoxfCount => boxfCount;
 
+        protected List<TransparentModel> transparentModels;
+
+        public List<TransparentModel> TransparentModels => transparentModels;
+
         public Screen(Game1 game, AssetManager assMan, SpriteBatch spriteBatch)
         {
             Game = game;
@@ -40,6 +51,7 @@ namespace FZtarOGL.Screen
 
             Entities = new List<Entity.Entity>();
             BoundingBoxesFiltered = new List<BoundingBoxFiltered>();
+            transparentModels = new List<TransparentModel>();
 
             // put colliderflag and mask inside a new class containing a boundingBox.
             //BoundingBox b = new BoundingBox();
@@ -52,36 +64,58 @@ namespace FZtarOGL.Screen
             BoundingBoxesDrawEffect.Alpha = 1;
         }
 
+        protected void ResetCounters()
+        {
+            _modelsDrawn = 0;
+        }
+        
         public abstract void Input(GameTime gt, float dt);
         public abstract void Tick(GameTime gt, float dt);
 
         public void CheckCollisions(List<BoundingBoxFiltered> boxesFiltered, float dt)
         {
-            // 1. Add boxes first, Entitiy -> screen -> list.add.
-            Console.WriteLine("#boxes: " + boxesFiltered.Count);
-            // 2. do something
-            foreach (var boxf1 in boxesFiltered)
+            if (boxesFiltered.Count > 0)
             {
-                foreach (var boxf2 in boxesFiltered)
+                // 1. Add boxes first, Entitiy -> screen -> list.add.
+                Console.WriteLine("#boxes: " + boxesFiltered.Count);
+                // 2. do something
+                foreach (var boxf1 in boxesFiltered)
                 {
-                    bool isSameBox = boxf1 == boxf2;
-                    if (!isSameBox)
+                    foreach (var boxf2 in boxesFiltered)
                     {
-                        bool containsBit = (boxf1.Mask & boxf2.Filter) == boxf2.Filter;
-                        if (containsBit)
+                        bool isSameBox = boxf1 == boxf2;
+                        if (!isSameBox)
                         {
-                            if (boxf1.Box.Intersects(boxf2.Box))
+                            bool containsBit = (boxf1.Mask & boxf2.Filter) == boxf2.Filter;
+                            if (containsBit)
                             {
-                                boxf1.Parent.OnCollision(boxf2.Filter, dt);
+                                if (boxf1.Box.Intersects(boxf2.Box))
+                                {
+                                    boxf1.Parent.OnCollision(boxf2.Filter, dt);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            //clear
-            boxfCount = boxesFiltered.Count;
-            BoundingBoxesFiltered.Clear();
+                //clear
+                boxfCount = boxesFiltered.Count;
+
+                BoundingBoxesFiltered.Clear();
+            }
+        }
+
+        protected void OrderTransparentModelsByDistanceFromCam(PerspectiveCamera cam)
+        {
+            if (transparentModels.Count > 0)
+            {
+                foreach (var transModel in transparentModels)
+                {
+                    transModel.DistanceFromCam = Vector3.DistanceSquared(cam.Position, transModel.ModelTrans.Translation);
+                }
+
+                transparentModels.OrderBy(o => o.DistanceFromCam);
+            }
         }
 
         public abstract void Draw(float dt);
@@ -123,6 +157,8 @@ namespace FZtarOGL.Screen
         }
 
         public abstract void DrawModel(Model model, Matrix modelTransform);
+        
+        //public abstract void DrawTransparentModels(Model model, Matrix modelTransform);
 
         // Initialize an array of indices for the box. 12 lines require 24 indices
         protected short[] bBoxIndices =

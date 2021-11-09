@@ -42,7 +42,7 @@ namespace FZtarOGL.Entity
             modelRot = rotation;
             _playerShip = ship;
 
-            _model = assMan.LoadAsset<Model>("models/ray");
+            _model = assMan.RayModel;
 
             modelScale = Vector3.One;
             const float rayOffsetFromShip = 1;
@@ -57,7 +57,7 @@ namespace FZtarOGL.Entity
             
             Vector3 min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
             Vector3 max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.filterPlayerRay, BoxFilters.maskPlayerRay);
+            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerRay, BoxFilters.MaskPlayerRay);
             
             boxfes.Add(boxf);
 
@@ -131,7 +131,7 @@ namespace FZtarOGL.Entity
         {
             switch (filter)
             {
-                case BoxFilters.filterTower:
+                case BoxFilters.FilterTower:
                     ToDestroy = true;
                     break;
             }
