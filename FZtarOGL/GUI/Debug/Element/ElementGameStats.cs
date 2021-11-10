@@ -15,7 +15,7 @@ namespace FZtarOGL.GUI.Debug.Element
 
             ImGui.Text("Screens: " + _screens);
             ImGui.Text("Entities: " + _entities);
-            ImGui.Text("Bodies: " + _bodies);
+            ImGui.Text("Boxes: " + _bodies);
             ImGui.Text("Virtual travel distance: " + _virtTravelDist);
 
             ImGui.End();

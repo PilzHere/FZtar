@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Media;
 
 namespace FZtarOGL.Level
 {
-    public class Level01 : Level
+    public class Level03 : Level
     {
         private int _segmentDefaultLength = 200;
         private int _segmentNextLength = 200;
@@ -16,11 +16,13 @@ namespace FZtarOGL.Level
         
         private BasicEffect basicEffectPrimitives;
 
-        public Level01(Screen.Screen screen, AssetManager assMan, SpriteBatch spriteBatch) : base(screen, assMan,
+        public Level03(Screen.Screen screen, AssetManager assMan, SpriteBatch spriteBatch) : base(screen, assMan,
             spriteBatch)
         {
-            BackgroundTexture = AssMan.Bg02;
-            FogColor1 = new Vector3(112 / 255f, 160 / 255f, 160 / 255f); // bg color horizon
+            isLocatedInSpace = true;
+            
+            BackgroundTexture = AssMan.Bg04;
+            FogColor1 = new Vector3(0 / 255f, 5 / 255f, 6 / 255f); // bg color horizon
             FogStart1 = 150;
             FogEnd1 = 200;
 
@@ -30,7 +32,7 @@ namespace FZtarOGL.Level
             BackgroundPosInt = new Vector2((int)BackgroundPos.X, (int)BackgroundPos.Y);
             BackgroundOrigin = new Vector2(256, 256);
 
-            levelSong = assMan.songLevel1;
+            levelSong = assMan.songLevel3;
             MediaPlayer.Play(levelSong);
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.2f;
@@ -101,15 +103,7 @@ namespace FZtarOGL.Level
                         // messages
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet01Tex, AssMan.Font02_08,
-                            "Hej alla!\nDr Inet har...\nHur gar det for\ner?", 3));
-                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
-                            AssMan.AvatarDrInet02Tex, AssMan.Font02_08,
-                            "Mindre an 10\ndagar kvar bara.\nMen kann ingen\nstress...\nMan ska ha roligt\npa ett jam!",
-                            5));
-                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
-                            AssMan.AvatarDrInet03Tex, AssMan.Font02_08,
-                            "Lycka till i jamet!\nGO JAVA BOYS!", 3));
-
+                            "In space...\nNo one can hear\nyou scream.", 4));
                         break;
                     case 2:
 

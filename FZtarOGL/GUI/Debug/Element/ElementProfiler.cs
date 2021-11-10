@@ -32,9 +32,9 @@ namespace FZtarOGL.GUI.Debug.Element
             ImGui.Text("Vertex: " + Profiler.ProfilerStats.VertexShaderSwitches);
             ImGui.Text("Fragment: " + Profiler.ProfilerStats.FragmentShaderSwitches);
             ImGui.Text("\nShapes drawn");
-            ImGui.Text("Sprites drawn: " + Profiler.ProfilerStats.SpritesDrawn);
-            ImGui.Text("Models drawn: " + _modelsDrawn);
-            ImGui.Text("Primitives drawn: " + Profiler.ProfilerStats.PrimitivesDrawn);
+            ImGui.Text("Sprites: " + Profiler.ProfilerStats.SpritesDrawn);
+            ImGui.Text("Models: " + _modelsDrawn);
+            ImGui.Text("Primitives: " + Profiler.ProfilerStats.PrimitivesDrawn);
             
             ImGui.Button("Render bounding boxes");
             if (ImGui.IsItemClicked(0))

@@ -29,11 +29,6 @@ namespace FZtarOGL.Screen
 
         private OrthographicCamera _camera;
 
-        private BasicEffect basicEffectPrimitives;
-
-        private Vector3[,] floorDots2D = new Vector3[7, 6]; // z, x
-        private Vector3 floorDotsMiniOffset = new Vector3(0, 0, 0.33f); // x was 0.05f
-
         private PlayerShip _playerShip;
 
         private BitmapFont _font01_16;
@@ -69,47 +64,15 @@ namespace FZtarOGL.Screen
             Cam3d1.fieldOfViewDegrees = 45;
             Cam3d1.RotationRadiansPerSecond = 100f;
 
-            basicEffectPrimitives = new BasicEffect(_graphicsDevice);
-
             Entities.Add(new Cube(this, assMan, new Vector3(0, 0.5f, -200)));
 
             _playerShip = new PlayerShip(this, spriteBatch, assMan, new Vector3(0, 0.5f, -6), Cam3d1);
             Entities.Add(_playerShip);
 
-            // Debug gui
-            var debugGuiRendererGameStats = new MonoGameImGuiRenderer(game);
-            debugGuiRendererGameStats.Initialize();
-            _guiManager = new GuiDebugManager(game, this, debugGuiRendererGameStats);
-
-            const int dotPosStartX = -10;
-            const int dotPosY = 0;
-            const int dotPosStartZ = 10;
-            const int dotPosOffsetX = 4;
-            const int dotPosOffsetZ = 10;
-            var dotPosZ = dotPosStartZ;
-            for (var z = 0; z < floorDots2D.GetLength(0); z++) // 0-5
-            {
-                var dotPosX = dotPosStartX;
-                dotPosZ -= dotPosOffsetZ;
-                for (var x = 0; x < floorDots2D.GetLength(1); x++) // 0-6
-                {
-                    Console.WriteLine("x: " + dotPosX + " z: " + dotPosZ);
-
-                    floorDots2D[z, x].X = dotPosX;
-                    floorDots2D[z, x].Y = dotPosY;
-                    floorDots2D[z, x].Z = dotPosZ;
-
-                    dotPosX += dotPosOffsetX;
-                }
-            }
-
-            camNextZ = Cam3d1.Position.Z - dotsOneStep;
-
-            CurrentLevel = new Level01(this, assMan, spriteBatch);
+            //CurrentLevel = new Level01(this, assMan, spriteBatch);
+            CurrentLevel = new Level03(this, assMan, spriteBatch);
+            //CurrentLevel = new Level03(this, assMan, spriteBatch);
         }
-
-        private const float dotsOneStep = 10;
-        private float camNextZ;
 
         private Vector3 cam3dPos;
 
@@ -175,8 +138,10 @@ namespace FZtarOGL.Screen
             if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
             {
                 // BUG: No limit, does not set minimum rotation: just stops rotating.
-                if (Cam3d1.Up.X <= -camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
-                else Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
+                //if (Cam3d1.Up.X <= -camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
+                //else Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
+
+                if (Cam3d1.Up.X >= -camRotMaxX) Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
 
                 //cam3dPos.X -= camSpeedX * dt;
                 CurrentLevel.BackgroundPos.X += camSpeedX * 3.3f * dt;
@@ -187,8 +152,10 @@ namespace FZtarOGL.Screen
             if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
             {
                 // BUG: No limit, does not set minimum rotation: just stops rotating.
-                if (Cam3d1.Up.X >= camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
-                else Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
+                //if (Cam3d1.Up.X >= camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
+                //else Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
+
+                if (Cam3d1.Up.X <= camRotMaxX) Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
 
                 //cam3dPos.X += camSpeedX * dt;
                 CurrentLevel.BackgroundPos.X -= camSpeedX * 3.3f * dt;
@@ -308,24 +275,20 @@ namespace FZtarOGL.Screen
         public override void Tick(GameTime gt, float dt)
         {
             ResetCounters();
-            
+
             transparentModels.Clear();
-            
+
             RemoveDestroyedEntities();
 
             CurrentLevel.Tick(gt, dt);
 
             UpdateAllEntities(dt);
 
-            floorDotsPos.Z += CurrentLevel.VirtualSpeedZ * dt;
-
-            if (floorDotsPos.Z > 10) floorDotsPos.Z = 0;
-
             CheckCollisions(BoundingBoxesFiltered, dt);
 
             OrderTransparentModelsByDistanceFromCam(Cam3d1);
-            
-            Console.WriteLine();
+
+            //Console.WriteLine();
         }
 
         // old code
@@ -335,7 +298,7 @@ namespace FZtarOGL.Screen
         // old code end
 
         private Vector3 floorPos = new Vector3(0, 0, -50);
-        private Vector3 floorDotsPos = Vector3.Zero;
+        //private Vector3 floorDotsPos = Vector3.Zero;
 
         public override void Draw(float dt)
         {
@@ -356,7 +319,7 @@ namespace FZtarOGL.Screen
             //_graphicsDevice.BlendState = BlendState.AlphaBlend; // Needed?
 
             // Draw dots on floor
-            basicEffectPrimitives.View = Cam3d1.View;
+            /*basicEffectPrimitives.View = Cam3d1.View;
             basicEffectPrimitives.Projection = Cam3d1.Projection;
             basicEffectPrimitives.VertexColorEnabled = true;
             basicEffectPrimitives.CurrentTechnique.Passes[0].Apply();
@@ -372,7 +335,9 @@ namespace FZtarOGL.Screen
                     };
                     _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
-            }
+            }*/
+            
+            CurrentLevel.DrawGroundEffect(Cam3d1, dt);
 
             // For debugging - red line at end
             /*Vector3 startPoint = new Vector3(-10, 0, -200);
@@ -383,10 +348,15 @@ namespace FZtarOGL.Screen
                 { new VertexPositionColor(startPoint, Color.Red), new VertexPositionColor(endPoint, Color.Red) };
             _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices2, 0, 1);*/
 
-            Draw3DAllEntities(dt);
+            CurrentLevel.DrawFloor();
             
+            Draw3DAllEntities(dt);
+
+            //Console.WriteLine("Dist:");
             foreach (var transModel in TransparentModels)
             {
+                Console.WriteLine(transModel.DistanceFromCam);
+
                 if (transModel.Lit) DrawModel(transModel.Model, transModel.ModelTrans);
                 else DrawModelUnlit(transModel.Model, transModel.ModelTrans);
             }
@@ -396,7 +366,7 @@ namespace FZtarOGL.Screen
 
         public override void DrawModel(Model model, Matrix modelTransform)
         {
-            _graphicsDevice.BlendState = BlendState.AlphaBlend;
+            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
 
             foreach (var mesh in model.Meshes)
             {
@@ -407,6 +377,8 @@ namespace FZtarOGL.Screen
                     effect.Projection = Cam3d1.Projection;
 
                     effect.Alpha = 1;
+                    //effect.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                    //effect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
                     effect.FogEnabled = true;
                     effect.FogColor = CurrentLevel.FogColor;
                     effect.FogStart = CurrentLevel.FogStart;
@@ -437,8 +409,8 @@ namespace FZtarOGL.Screen
 
         public override void DrawModelUnlit(Model model, Matrix modelTransform)
         {
-            _graphicsDevice.BlendState = BlendState.AlphaBlend;
-            
+            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
+
             foreach (var mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -448,9 +420,11 @@ namespace FZtarOGL.Screen
                     effect.Projection = Cam3d1.Projection;
 
                     effect.Alpha = 1;
+                    //effect.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                    //effect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                     effect.LightingEnabled = false;
-                    effect.DiffuseColor = new Vector3(1, 0, 0);
+                    effect.DiffuseColor = new Vector3(1, 1, 1);
 
                     for (var i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
                     {
@@ -460,14 +434,14 @@ namespace FZtarOGL.Screen
 
                 mesh.Draw();
             }
-            
+
             _modelsDrawn++;
         }
 
         public override void DrawModelUnlitWithColor(Model model, Matrix modelTransform, Vector3 unlitColor)
         {
-            _graphicsDevice.BlendState = BlendState.AlphaBlend;
-            
+            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
+
             foreach (var mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -477,9 +451,12 @@ namespace FZtarOGL.Screen
                     effect.Projection = Cam3d1.Projection;
 
                     effect.Alpha = 1;
+                    //effect.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                    //effect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
                     effect.LightingEnabled = false;
                     effect.DiffuseColor = unlitColor;
+                    effect.TextureEnabled = false;
 
                     for (var i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
                     {
@@ -489,8 +466,37 @@ namespace FZtarOGL.Screen
 
                 mesh.Draw();
             }
-            
+
             _modelsDrawn++;
+        }
+
+        public override void DrawModelMeshUnlitWithColor(ModelMesh mesh, Matrix modelTransform, Vector3 unlitColor)
+        {
+            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
+
+            foreach (BasicEffect effect in mesh.Effects)
+            {
+                effect.World = modelTransform;
+                effect.View = Cam3d1.View;
+                effect.Projection = Cam3d1.Projection;
+
+                effect.Alpha = 1;
+                //effect.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                //effect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+                effect.LightingEnabled = false;
+                effect.DiffuseColor = unlitColor;
+                effect.TextureEnabled = false;
+
+                for (var i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
+                {
+                    effect.CurrentTechnique.Passes[i].Apply();
+                }
+            }
+
+            mesh.Draw();
+
+            //_modelsDrawn++;
         }
 
         /*public override void DrawTransparentModels(Model model, Matrix modelTransform)
@@ -517,7 +523,15 @@ namespace FZtarOGL.Screen
                     VertexPositionColor[] primitiveList = new VertexPositionColor[corners.Length];
 
                     Color currentColor = Color.White;
-                    if (box.Filter == BoxFilters.FilterPlayerRay) currentColor = Color.Red;
+                    switch (box.Filter)
+                    {
+                        case BoxFilters.FilterNothing:
+                            currentColor = Color.Gray;
+                            break;
+                        case BoxFilters.FilterPlayerRay:
+                            currentColor = Color.Red;
+                            break;
+                    }
 
                     // Assign the 8 box vertices
                     for (int i = 0; i < corners.Length; i++)
@@ -679,6 +693,14 @@ namespace FZtarOGL.Screen
 
         public override void DrawDebugGUI(GameTime gt)
         {
+            if (_guiManager == null)
+            {
+                // Debug gui
+                var debugGuiRendererGameStats = new MonoGameImGuiRenderer(Game);
+                debugGuiRendererGameStats.Initialize();
+                _guiManager = new GuiDebugManager(Game, this, debugGuiRendererGameStats);
+            }
+
             _guiManager.Tick();
             _guiManager.RenderElements(gt.ElapsedGameTime);
         }

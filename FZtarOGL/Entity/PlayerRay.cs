@@ -31,7 +31,7 @@ namespace FZtarOGL.Entity
         private Vector3 currentRayColor;
 
         //private Random rnd = new Random();
-        private int rayColorOrdered = 0;
+        private int rayColorOrdered;
         private float timerRayColor;
 
         public PlayerRay(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 rotation, PlayerShip ship)
@@ -74,9 +74,12 @@ namespace FZtarOGL.Entity
         {
             if (modelPos.Z < _playerShip.ModelPos.Z - 200)
                 _ToDestroy = true;
-            
-            if (modelPos.Y < 0)
-                _ToDestroy = true;
+
+            if (!_screen.CurrentLevel.IsLocatedInSpace)
+            {
+                if (modelPos.Y < 0)
+                    _ToDestroy = true;                
+            }
 
             float speed = 100;
             //modelPos.Z -= speedZ * dt;

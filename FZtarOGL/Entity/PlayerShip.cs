@@ -19,6 +19,12 @@ namespace FZtarOGL.Entity
         public Vector3 ModelPos;
 
         private Model _model;
+        private ModelMesh _thrusterMesh;
+        
+        private Vector3[] thrusterColors;
+        private Vector3 currentThrusterColor;
+        private int thrusterColorOrdered;
+        private float timerThrusterColor;
 
         private Texture2D _aimTex;
 
@@ -78,6 +84,7 @@ namespace FZtarOGL.Entity
 
             _aimTex = assMan.PlayerAimTex;
             _model = assMan.PlayerShipModel;
+            _thrusterMesh = _model.Meshes[1];
 
             ModelPos = position;
             ModelScale = new Vector3(1, 1, 1);
@@ -117,12 +124,34 @@ namespace FZtarOGL.Entity
             //boxf.Box = BoundingBox.CreateFromSphere(_model.Meshes[0].BoundingSphere);
             
             boxfes.Add(boxf);
+            
+            // thruster colors
+            thrusterColors = new Vector3[4];
+            thrusterColors[0] = new Vector3(255/255f, 255/255f, 255/255f);
+            thrusterColors[1] = new Vector3(240/255f, 105/255f, 35/255f);
+            thrusterColors[2] = new Vector3(255/255f, 170/255f, 50/255f);
+            thrusterColors[3] = new Vector3(255/255f, 230/255f, 90/255f);
+            currentThrusterColor = thrusterColors[0];
         }
 
         private bool keyUpIsPressed;
+        private bool keySpaceIsPressed;
 
         public void Input(GameTime gt, float dt)
         {
+            // TODO: For testing!
+            if (KeyboardExtended.GetState().IsKeyUp(Keys.Space))
+            {
+                keySpaceIsPressed = false;
+            }
+
+            if (!keySpaceIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Space))
+            {
+                _screen.CurrentLevel.MoveEverythingForward1 = !_screen.CurrentLevel.MoveEverythingForward1;
+                keySpaceIsPressed = true;
+            }
+            // TEsting end
+            
             if (KeyboardExtended.GetState().IsKeyUp(Keys.Up))
             {
                 keyUpIsPressed = false;
@@ -281,9 +310,28 @@ namespace FZtarOGL.Entity
             
             //_screen.BoundingBoxesFilteredLists.Add(boxes);
             
+            // thrustercolor
+            timerThrusterColor += dt;
+            const float timeRayColor = 0.025f;
+            bool changeColor = timerThrusterColor >= timeRayColor;
+            if (changeColor)
+            {
+                // ordered
+                thrusterColorOrdered++;
+                if (thrusterColorOrdered > thrusterColors.Length - 1) thrusterColorOrdered = 0;
+                currentThrusterColor = thrusterColors[thrusterColorOrdered];
+
+                // random
+                //int rayColor = rnd.Next(0, rayColors.Length);
+                //currentRayColor = rayColors[rayColor];
+
+                timerThrusterColor = 0;
+            }
+            
             // aim
             const float camPlayerDist = 6;
-            const float fovFar = float.MinValue + camPlayerDist;
+            //const float fovFar = float.MinValue + camPlayerDist;
+            const float fovFar = -200 + camPlayerDist;
             
             _aimPos3d.X = ModelTrans.Forward.X * fovFar * dt;
             _aimPos3d.Y = ModelTrans.Forward.Y * fovFar * dt;
@@ -343,6 +391,7 @@ namespace FZtarOGL.Entity
         public override void Draw3D(float dt)
         {
             _screen.DrawModel(_model, ModelTrans);
+            _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, ModelTrans, currentThrusterColor);
         }
         
         public override void DrawBoundingBox()

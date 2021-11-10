@@ -39,6 +39,30 @@
 /processorParam:TextureFormat=Color
 /build:textures/bg02.png
 
+#begin textures/bg03.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/bg03.png
+
+#begin textures/bg04.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:textures/bg04.png
+
 #begin textures/aim.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -88,6 +112,25 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=NoChange
 /build:models/floor.fbx
+
+#begin models/floorClouds.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/floorClouds.fbx
 
 #begin models/playerShip.fbx
 /importer:FbxImporter
@@ -420,14 +463,32 @@
 /processorParam:TextureFormat=Color
 /build:models/fz.png
 
-#begin music/lastBoss.mp3
+#begin sound/music/title.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:music/lastBoss.mp3
+/build:sound/music/title.mp3
 
-#begin music/action.mp3
+#begin sound/music/level1.mp3
 /importer:Mp3Importer
 /processor:SongProcessor
 /processorParam:Quality=Best
-/build:music/action.mp3
+/build:sound/music/level1.mp3
+
+#begin sound/music/level2.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/music/level2.mp3
+
+#begin sound/music/level3.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/music/level3.mp3
+
+#begin sound/music/ending.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:sound/music/ending.mp3

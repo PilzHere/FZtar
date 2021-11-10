@@ -77,7 +77,7 @@ namespace FZtarOGL.Screen
             if (boxesFiltered.Count > 0)
             {
                 // 1. Add boxes first, Entitiy -> screen -> list.add.
-                Console.WriteLine("#boxes: " + boxesFiltered.Count);
+                //Console.WriteLine("#boxes: " + boxesFiltered.Count);
                 // 2. do something
                 foreach (var boxf1 in boxesFiltered)
                 {
@@ -114,7 +114,7 @@ namespace FZtarOGL.Screen
                     transModel.DistanceFromCam = Vector3.DistanceSquared(cam.Position, transModel.ModelTrans.Translation);
                 }
 
-                transparentModels.OrderBy(o => o.DistanceFromCam);
+                transparentModels = transparentModels.OrderByDescending(o => o.DistanceFromCam).ToList();
             }
         }
 
@@ -176,6 +176,8 @@ namespace FZtarOGL.Screen
         public abstract void DrawModelUnlit(Model model, Matrix modelTransform);
 
         public abstract void DrawModelUnlitWithColor(Model model, Matrix modelTransform, Vector3 unlitColor);
+        
+        public abstract void DrawModelMeshUnlitWithColor(ModelMesh mesh, Matrix modelTransform, Vector3 unlitColor);
 
         protected void RemoveAllEntities()
         {
