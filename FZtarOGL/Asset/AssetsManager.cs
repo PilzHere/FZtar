@@ -16,6 +16,7 @@ namespace FZtarOGL.Asset
         }
 
         // Textures location
+        private const string _titleLoc = "textures/title";
         private const string _bg01Loc = "textures/bg01";
         private const string _bg02Loc = "textures/bg02";
         private const string _bg03Loc = "textures/bg03";
@@ -29,6 +30,7 @@ namespace FZtarOGL.Asset
         private const string _playerAimTexLoc = "textures/aim";
 
         // Textures
+        public Texture2D Title;
         public Texture2D Bg01;
         public Texture2D Bg02;
         public Texture2D Bg03;
@@ -52,6 +54,9 @@ namespace FZtarOGL.Asset
         private const string _modelRing02Loc = "models/ring02";
         private const string _modelBillboardHealth16Loc = "models/billboardPlaneHealth";
         private const string _modelBillboardFZ16Loc = "models/billboardPlaneFZ";
+        private const string _modelHeich01Loc = "models/heich01";
+        private const string _modelHeich02Loc = "models/heich02";
+        private const string _modelHeich03Loc = "models/heich03";
 
         // Models
         public Model FloorModel;
@@ -64,6 +69,9 @@ namespace FZtarOGL.Asset
         public Model Ring02Model;
         public Model BillboardHealth16Model;
         public Model BillboardFZ16Model;
+        public Model Heich01Model;
+        public Model Heich02Model;
+        public Model Heich03Model;
 
         // Font locations
         private const string _font01_08Loc = "fonts/font01_08";
@@ -137,6 +145,7 @@ namespace FZtarOGL.Asset
         {
             Console.WriteLine("Loading all texture assets...");
 
+            Title = _contentManager.Load<Texture2D>(_titleLoc);
             HudTex = _contentManager.Load<Texture2D>(_hudLoc);
             AvatarFrameTex = _contentManager.Load<Texture2D>(_avatarFrameLoc);
             AvatarFrameBgTex = _contentManager.Load<Texture2D>(_avatarFrameBgLoc);
@@ -164,6 +173,9 @@ namespace FZtarOGL.Asset
             Ring02Model = _contentManager.Load<Model>(_modelRing02Loc);
             BillboardHealth16Model = _contentManager.Load<Model>(_modelBillboardHealth16Loc);
             BillboardFZ16Model = _contentManager.Load<Model>(_modelBillboardFZ16Loc);
+            Heich01Model = _contentManager.Load<Model>(_modelHeich01Loc);
+            Heich02Model = _contentManager.Load<Model>(_modelHeich02Loc);
+            Heich03Model = _contentManager.Load<Model>(_modelHeich03Loc);
         }
 
         private void LoadAllFonts()

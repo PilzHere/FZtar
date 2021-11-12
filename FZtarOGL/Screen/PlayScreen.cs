@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Camera;
@@ -15,7 +14,6 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.BitmapFonts;
 using MonoGame.Extended.Input;
-using MonoGame.Extended.Sprites;
 using MonoGame.Extended.ViewportAdapters;
 using level = FZtarOGL.Level.Level;
 
@@ -25,7 +23,7 @@ namespace FZtarOGL.Screen
     {
         private GraphicsDevice _graphicsDevice;
 
-        private GuiDebugManager _guiManager;
+        private GuiDebugManager _guiManager; // put into game isntead?!
 
         private OrthographicCamera _camera;
 
@@ -34,7 +32,6 @@ namespace FZtarOGL.Screen
         private BitmapFont _font01_16;
         private BitmapFont _font02_08;
 
-        private Texture2D _hudMessageAvatar;
         private Texture2D _hudTex;
 
         public PlayScreen(Game1 game, AssetManager assMan, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice) :
@@ -49,14 +46,12 @@ namespace FZtarOGL.Screen
             _font01_16 = assMan.Font01_16;
             _font02_08 = assMan.Font02_08;
 
-            _hudMessageAvatar = assMan.AvatarDrInet01Tex;
-
             var viewportAdapter = new BoxingViewportAdapter(game.Window, _graphicsDevice, 256, 224);
             _camera = new OrthographicCamera(viewportAdapter);
 
             Cam3d1 = new PerspectiveCamera(_graphicsDevice, game.Window);
             Cam3d1.Position = new Vector3(0, 1, 0);
-            cam3dPos = Cam3d1.Position;
+            _cam3dPos = Cam3d1.Position;
             Cam3d1.LookAtDirection = Vector3.Forward;
             Cam3d1.MovementUnitsPerSecond = 10f;
             Cam3d1.farClipPlane = 200;
@@ -64,30 +59,18 @@ namespace FZtarOGL.Screen
             Cam3d1.fieldOfViewDegrees = 45;
             Cam3d1.RotationRadiansPerSecond = 100f;
 
-            Entities.Add(new Cube(this, assMan, new Vector3(0, 0.5f, -200)));
-
             _playerShip = new PlayerShip(this, spriteBatch, assMan, new Vector3(0, 0.5f, -6), Cam3d1);
             Entities.Add(_playerShip);
 
-            //CurrentLevel = new Level01(this, assMan, spriteBatch);
-            CurrentLevel = new Level03(this, assMan, spriteBatch);
+            CurrentLevel = new Level01(this, assMan, spriteBatch);
+            //CurrentLevel = new Level02(this, assMan, spriteBatch);
             //CurrentLevel = new Level03(this, assMan, spriteBatch);
         }
 
-        private Vector3 cam3dPos;
-
-        private Keys _newScreenKey = Keys.R;
-
         public override void Input(GameTime gt, float dt)
         {
-            if (KeyboardExtended.GetState().IsKeyDown(_newScreenKey))
-            {
-                //Game.ScreenManager.AddScreen(new PlayScreen(Game, AssMan, SpriteBatch,
-                //    _graphicsDevice /*, DebugGuiRenderer*/));
-            }
-
             //CAM
-            const float camSpeedZ = 33; // was 33
+            //const float camSpeedZ = 33; // was 33
             const float camSpeedY = 5;
             const float camSpeedX = 7; // 7
             const float camRotMaxX = 0.1f;
@@ -95,19 +78,21 @@ namespace FZtarOGL.Screen
             const float camPosMaxX = 7.5f; // was 7.5f
             const float camPosMaxY = 6.5f;
             const float camPosMinY = 1;
-            const float camUpRotYMax = 0.995f;
-            const float camUpRotYSpeed = 0.2f;
+            //const float camUpRotYMax = 0.995f;
+            //const float camUpRotYSpeed = 0.2f;
             const float camRotRollSpeed = 20;
             const float camRotRollBackSpeed = 10;
 
-            const float maxCamDistanceToPlayer = 37.5f;
+            //const float maxCamDistanceToPlayer = 37.5f;
 
             _playerShip.Input(gt, dt);
 
-            const float camMaxRotNonLocalAngle = 0.05f;
+            //const float camMaxRotNonLocalAngle = 0.05f;
             float nonLocalRotUpDown = 0;
             bool nonLocalRotChanged = false;
             float nonLocalRotBoost = 0.2f; // 0.15f
+            float backgroundPosBoostY = 3.05f;
+            float backgroundPosBoostX = 3.3f;
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.W))
             {
@@ -115,10 +100,9 @@ namespace FZtarOGL.Screen
                 Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
                 nonLocalRotChanged = true;
 
-                //cam3dPos.Z -= camSpeed * dt;
-                cam3dPos.Y += camSpeedY * dt;
+                _cam3dPos.Y += camSpeedY * dt;
 
-                CurrentLevel.BackgroundPos.Y += camSpeedY * 3.05f * dt;
+                CurrentLevel.BackgroundPos.Y += camSpeedY * backgroundPosBoostY * dt;
             }
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.S))
@@ -127,91 +111,51 @@ namespace FZtarOGL.Screen
                 Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
                 nonLocalRotChanged = true;
 
-                //cam3dPos.Z += camSpeed * dt;
-                cam3dPos.Y -= camSpeedY * dt;
+                _cam3dPos.Y -= camSpeedY * dt;
 
-                CurrentLevel.BackgroundPos.Y -= camSpeedY * 3.05f * dt;
+                CurrentLevel.BackgroundPos.Y -= camSpeedY * backgroundPosBoostY * dt;
             }
-
-            //cam3dPos.Z -= camSpeedZ * dt;
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
             {
-                // BUG: No limit, does not set minimum rotation: just stops rotating.
-                //if (Cam3d1.Up.X <= -camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
-                //else Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
-
                 if (Cam3d1.Up.X >= -camRotMaxX) Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
-
-                //cam3dPos.X -= camSpeedX * dt;
-                CurrentLevel.BackgroundPos.X += camSpeedX * 3.3f * dt;
-
-                //playerShipModelRot.Z += playerShipRotZSpeed * dt;
+                CurrentLevel.BackgroundPos.X += camSpeedX * backgroundPosBoostX * dt;
             }
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
             {
-                // BUG: No limit, does not set minimum rotation: just stops rotating.
-                //if (Cam3d1.Up.X >= camRotMaxX) Console.WriteLine("Cant rotate more!: " + Cam3d1.Up.X);
-                //else Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
-
                 if (Cam3d1.Up.X <= camRotMaxX) Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
-
-                //cam3dPos.X += camSpeedX * dt;
-                CurrentLevel.BackgroundPos.X -= camSpeedX * 3.3f * dt;
-
-                //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
+                CurrentLevel.BackgroundPos.X -= camSpeedX * backgroundPosBoostX * dt;
             }
 
             // limit camera pos Y
-            if (cam3dPos.Y > camPosMaxY)
+            if (_cam3dPos.Y > camPosMaxY)
             {
                 if (nonLocalRotChanged)
                     Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
 
-                cam3dPos.Y = camPosMaxY;
+                _cam3dPos.Y = camPosMaxY;
                 CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
             }
 
-            if (cam3dPos.Y < camPosMinY)
+            if (_cam3dPos.Y < camPosMinY)
             {
                 if (nonLocalRotChanged)
                     Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
 
-                cam3dPos.Y = camPosMinY;
+                _cam3dPos.Y = camPosMinY;
                 CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
             }
-
-            //Console.WriteLine(Cam3d.Forward.Y);
-
-            // BUG: Dont use this. This is what is causing the stuttering witch the cam/playership when moving the playership.
-            /*var distance = Vector3.DistanceSquared(Cam3d.Position, _playerShip.ModelPos);
-            
-            if (distance > maxCamDistanceToPlayer)
-            {
-                if (_playerShip.ModelPos.X > cam3dPos.X) // right
-                {
-                    cam3dPos.X += camSpeedX * dt;
-                    //bgPos.X -= camSpeedX * 3.3f * dt;
-                }
-                else if (_playerShip.ModelPos.X < cam3dPos.X) // left
-                {
-                    cam3dPos.X -= camSpeedX * dt;
-                    //bgPos.X += camSpeedX * 3.3f * dt;
-                }
-            }*/
 
             float maxDistXCamPlayerShip = 1.5f;
-            float distanceXCamPlayerShip = _playerShip.ModelPos.X - cam3dPos.X;
+            float distanceXCamPlayerShip = _playerShip.ModelPos.X - _cam3dPos.X;
             if (distanceXCamPlayerShip < -maxDistXCamPlayerShip)
             {
-                cam3dPos.X -= camSpeedX * dt;
-                //bgPos.X -= camSpeedX * 3.3f * dt;
+                _cam3dPos.X -= camSpeedX * dt;
             }
             else if (distanceXCamPlayerShip > maxDistXCamPlayerShip)
             {
-                cam3dPos.X += camSpeedX * dt;
-                //bgPos.X += camSpeedX * 3.3f * dt;
+                _cam3dPos.X += camSpeedX * dt;
             }
 
 
@@ -246,19 +190,19 @@ namespace FZtarOGL.Screen
                 }
             }
 
-            if (cam3dPos.X < -camPosMaxX)
+            if (_cam3dPos.X < -camPosMaxX)
             {
-                cam3dPos.X = -camPosMaxX;
+                _cam3dPos.X = -camPosMaxX;
                 CurrentLevel.KeepOldBackgroundPositionX();
             }
 
-            if (cam3dPos.X > camPosMaxX)
+            if (_cam3dPos.X > camPosMaxX)
             {
-                cam3dPos.X = camPosMaxX;
+                _cam3dPos.X = camPosMaxX;
                 CurrentLevel.KeepOldBackgroundPositionX();
             }
 
-            Cam3d1.Position = cam3dPos;
+            Cam3d1.Position = _cam3dPos;
 
             // old code
             const float radius = 100;
@@ -280,15 +224,13 @@ namespace FZtarOGL.Screen
 
             RemoveDestroyedEntities();
 
+            CheckCollisions(BoundingBoxesFiltered, dt);
+            
             CurrentLevel.Tick(gt, dt);
-
+            
             UpdateAllEntities(dt);
 
-            CheckCollisions(BoundingBoxesFiltered, dt);
-
             OrderTransparentModelsByDistanceFromCam(Cam3d1);
-
-            //Console.WriteLine();
         }
 
         // old code
@@ -296,9 +238,6 @@ namespace FZtarOGL.Screen
 
         private int _acc;
         // old code end
-
-        private Vector3 floorPos = new Vector3(0, 0, -50);
-        //private Vector3 floorDotsPos = Vector3.Zero;
 
         public override void Draw(float dt)
         {
@@ -312,30 +251,11 @@ namespace FZtarOGL.Screen
 
             Draw2DAllEntities(dt);
 
-            SpriteBatch.End(); // TODO: Can be called in DrawGUI later?
+            SpriteBatch.End();
 
             // For 3D we use the depth buffer.
             _graphicsDevice.DepthStencilState = DepthStencilState.Default;
             //_graphicsDevice.BlendState = BlendState.AlphaBlend; // Needed?
-
-            // Draw dots on floor
-            /*basicEffectPrimitives.View = Cam3d1.View;
-            basicEffectPrimitives.Projection = Cam3d1.Projection;
-            basicEffectPrimitives.VertexColorEnabled = true;
-            basicEffectPrimitives.CurrentTechnique.Passes[0].Apply();
-            for (var i = 0; i < floorDots2D.GetLength(0); i++) // 0-5
-            {
-                for (var j = 0; j < floorDots2D.GetLength(1); j++) // 0-6
-                {
-                    var vertices = new[]
-                    {
-                        new VertexPositionColor(floorDots2D[i, j] + floorDotsPos, Color.White),
-                        new VertexPositionColor(floorDots2D[i, j] + floorDotsPos + floorDotsMiniOffset,
-                            Color.Gray)
-                    };
-                    _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
-                }
-            }*/
             
             CurrentLevel.DrawGroundEffect(Cam3d1, dt);
 
@@ -347,16 +267,13 @@ namespace FZtarOGL.Screen
             var vertices2 = new[]
                 { new VertexPositionColor(startPoint, Color.Red), new VertexPositionColor(endPoint, Color.Red) };
             _graphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices2, 0, 1);*/
-
-            CurrentLevel.DrawFloor();
             
             Draw3DAllEntities(dt);
+            
+            CurrentLevel.DrawFloor();
 
-            //Console.WriteLine("Dist:");
             foreach (var transModel in TransparentModels)
             {
-                Console.WriteLine(transModel.DistanceFromCam);
-
                 if (transModel.Lit) DrawModel(transModel.Model, transModel.ModelTrans);
                 else DrawModelUnlit(transModel.Model, transModel.ModelTrans);
             }
@@ -366,8 +283,6 @@ namespace FZtarOGL.Screen
 
         public override void DrawModel(Model model, Matrix modelTransform)
         {
-            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
-
             foreach (var mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -407,10 +322,51 @@ namespace FZtarOGL.Screen
             _modelsDrawn++;
         }
 
+        public override void DrawModelWithColor(Model model, Matrix modelTransform, Vector3 color)
+        {
+            foreach (var mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.World = modelTransform;
+                    effect.View = Cam3d1.View;
+                    effect.Projection = Cam3d1.Projection;
+
+                    effect.Alpha = 1;
+                    //effect.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+                    //effect.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+                    effect.FogEnabled = true;
+                    effect.FogColor = CurrentLevel.FogColor;
+                    effect.FogStart = CurrentLevel.FogStart;
+                    effect.FogEnd = CurrentLevel.FogEnd;
+                    
+                    effect.DiffuseColor = color;
+
+                    effect.EnableDefaultLighting();
+                    //effect.AmbientLightColor = new Vector3(0,1,0);
+                    //effect.DirectionalLight0.Enabled = true;
+                    effect.DirectionalLight0.Direction = new Vector3(-0.5f, -1, -1);
+                    //effect.DirectionalLight0.DiffuseColor = new Vector3(1, 1, 1);
+                    //effect.DirectionalLight1.Enabled = false;
+                    //effect.DirectionalLight1.Direction = new Vector3(0,1, 0);
+                    //effect.DirectionalLight2.Enabled = false;
+                    //effect.DirectionalLight2.Direction = new Vector3(0,0, -1);
+                    //effect.PreferPerPixelLighting = true;
+
+                    for (var i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
+                    {
+                        effect.CurrentTechnique.Passes[i].Apply();
+                    }
+                }
+
+                mesh.Draw();
+            }
+
+            _modelsDrawn++;
+        }
+
         public override void DrawModelUnlit(Model model, Matrix modelTransform)
         {
-            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
-
             foreach (var mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -440,8 +396,6 @@ namespace FZtarOGL.Screen
 
         public override void DrawModelUnlitWithColor(Model model, Matrix modelTransform, Vector3 unlitColor)
         {
-            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
-
             foreach (var mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -472,8 +426,6 @@ namespace FZtarOGL.Screen
 
         public override void DrawModelMeshUnlitWithColor(ModelMesh mesh, Matrix modelTransform, Vector3 unlitColor)
         {
-            //_graphicsDevice.BlendState = BlendState.AlphaBlend;
-
             foreach (BasicEffect effect in mesh.Effects)
             {
                 effect.World = modelTransform;
@@ -495,17 +447,7 @@ namespace FZtarOGL.Screen
             }
 
             mesh.Draw();
-
-            //_modelsDrawn++;
         }
-
-        /*public override void DrawTransparentModels(Model model, Matrix modelTransform)
-        {
-            foreach (var transModel in TransparentModels)
-            {
-                DrawModel(model, modelTransform);
-            }
-        }*/
 
         public override void DrawBoundingBoxFiltered(List<BoundingBoxFiltered> boundingBoxesFiltered,
             Matrix modelTransform)
@@ -594,10 +536,6 @@ namespace FZtarOGL.Screen
 
                 // player aim
                 _playerShip.DrawAim(dt);
-
-                // test
-                //SpriteBatch.DrawString(_font01_16, "Hello...", new Vector2(50, 50), Color.White);
-                //SpriteBatch.DrawString(_font02_08, "...World!", new Vector2(50, 100), Color.White);
 
                 // game over
                 if (_playerShip.Hp <= 0)

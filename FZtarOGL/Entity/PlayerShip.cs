@@ -73,6 +73,12 @@ namespace FZtarOGL.Entity
         public BoundingBoxFiltered boxf; // test!
         private const float boxfMinX = 0.75f, boxfMinY = 0.15f, boxfMinZ = 0.5f;
         private const float boxfMaxX = 0.75f, boxfMaxY = 0.35f, boxfMaxZ = 0.5f;
+        private Vector3 min;
+        private Vector3 max;
+
+        private bool gotHit;
+        private float gotHitTimer;
+        private bool toRenderShip = true;
 
         public PlayerShip(Screen.Screen screen, SpriteBatch spriteBatch, AssetManager assMan, Vector3 position,
             PerspectiveCamera cam)
@@ -99,43 +105,27 @@ namespace FZtarOGL.Entity
             _hp = _maxHp;
             _power = _maxPower;
 
-            // Boundingboxes, one huge from all meshes min/max combined.
             boxfes = new List<BoundingBoxFiltered>();
-
-            /*Matrix[] transforms = new Matrix[_model.Bones.Count];
-            _model.CopyAbsoluteBoneTransformsTo(transforms);
-
-            foreach (ModelMesh mesh in _model.Meshes)
-            {
-                Matrix meshTransform = transforms[mesh.ParentBone.Index];
-                meshTransform = Matrix.CreateScale(1); // Why do I need this?
-                short filter = BoxFilters.filterPlayerShip;
-                short mask = BoxFilters.maskPlayerShip;
-                boxes.Add(BoundingBoxBuilder.BuildBoundingBoxFiltered(mesh, meshTransform, filter, mask));
-            }*/
             
-            // test
-            Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
+            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
             boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerShip, BoxFilters.MaskPlayerShip);
-            
-            //BoundingSphere sphere = BoundingSphere.CreateFromPoints(_model.Meshes[0].BoundingSphere);
-            //BoundingBox box = BoundingBox.CreateFromSphere(_model.Meshes[0].BoundingSphere);
-            //boxf.Box = BoundingBox.CreateFromSphere(_model.Meshes[0].BoundingSphere);
             
             boxfes.Add(boxf);
             
             // thruster colors
             thrusterColors = new Vector3[4];
-            thrusterColors[0] = new Vector3(255/255f, 255/255f, 255/255f);
-            thrusterColors[1] = new Vector3(240/255f, 105/255f, 35/255f);
-            thrusterColors[2] = new Vector3(255/255f, 170/255f, 50/255f);
-            thrusterColors[3] = new Vector3(255/255f, 230/255f, 90/255f);
+            thrusterColors[0] = ModelColors.PlayerThrusterColor1;
+            thrusterColors[1] = ModelColors.PlayerThrusterColor2;
+            thrusterColors[2] = ModelColors.PlayerThrusterColor3;
+            thrusterColors[3] = ModelColors.PlayerThrusterColor4;
             currentThrusterColor = thrusterColors[0];
         }
 
         private bool keyUpIsPressed;
         private bool keySpaceIsPressed;
+        
+        private float rotationGlobalY;
 
         public void Input(GameTime gt, float dt)
         {
@@ -182,7 +172,7 @@ namespace FZtarOGL.Entity
             }
 
             const float rotYSpeedBoost = 1;
-
+            
             if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
             {
                 ModelPos.X -= speedX * dt;
@@ -190,6 +180,10 @@ namespace FZtarOGL.Entity
                 if (ModelRot.Y < 0) ModelRot.Y += rotYSpeed * rotYSpeedBoost * dt;
                 else ModelRot.Y += rotYSpeed * dt;
                 //playerShipModelRot.Z += playerShipRotZSpeed * dt;
+                
+                rotationGlobalY -= 1 * dt;
+                
+                ModelRot.Z += 3 * dt;
             }
 
             if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
@@ -199,11 +193,27 @@ namespace FZtarOGL.Entity
                 if (ModelRot.Y > 0) ModelRot.Y -= rotYSpeed * rotYSpeedBoost * dt;
                 else ModelRot.Y -= rotYSpeed * dt;
                 //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
+
+                rotationGlobalY += 1 * dt;
+                
+                ModelRot.Z -= 3 * dt;
             }
         }
         
         public override void Tick(float dt)
         {
+            if (gotHit)
+            {
+                float gotHitCooldown = 1.33f;
+                gotHitTimer += dt;
+                if (gotHitTimer >= gotHitCooldown)
+                {
+                    gotHitTimer = 0;
+                    toRenderShip = true;
+                    gotHit = false;
+                }
+            }
+            
             //speedZ = _screen.CurrentLevel.VirtualSpeedZ;
 
             //ModelPos.Z -= speedZ * dt; // move forward
@@ -296,8 +306,8 @@ namespace FZtarOGL.Entity
                          Matrix.CreateTranslation(ModelPos);
             
             // bb
-            Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
+            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
             boxf.Box = new BoundingBox(min, max);
 
             boxfes.Clear();
@@ -347,9 +357,13 @@ namespace FZtarOGL.Entity
         {
             switch (filter)
             {
-                case BoxFilters.FilterTower:
-                    TakeDamage(5);
-                    Console.WriteLine("PLAYERSHIP HIT");
+                case BoxFilters.FilterObstacle:
+                    if (!gotHit)
+                    {
+                        TakeDamage(5);
+                        Console.WriteLine("PLAYERSHIP HIT");
+                        gotHit = true;
+                    }
                     break;
                 case BoxFilters.FilterRingHealth:
                     Heal(10);
@@ -388,20 +402,31 @@ namespace FZtarOGL.Entity
         {
         }
 
+        private float _gotHitFlashTime = 0.033f;
+        private float _gotHitFlashTimer;
+        
         public override void Draw3D(float dt)
         {
-            _screen.DrawModel(_model, ModelTrans);
-            _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, ModelTrans, currentThrusterColor);
+            if (gotHit)
+            {
+                _gotHitFlashTimer += dt;
+                if (_gotHitFlashTimer >= _gotHitFlashTime)
+                {
+                    toRenderShip = !toRenderShip;
+                    _gotHitFlashTimer = 0;
+                }
+            }
+
+            if (toRenderShip)
+            {
+                _screen.DrawModel(_model, ModelTrans);
+                
+                _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, ModelTrans, currentThrusterColor);
+            }
         }
         
         public override void DrawBoundingBox()
         {
-            //_screen.DrawBoundingBox(boundingBoxes, ModelTrans);
-            
-            //_screen.DrawBoundingBoxFiltered(boxes, ModelTrans);
-
-            //Matrix mat = new Matrix();
-            //mat = Matrix.CreateTranslation(ModelPos);
             _screen.DrawBoundingBoxFiltered(boxfes, Matrix.Identity);
         }
 

@@ -26,6 +26,8 @@ namespace FZtarOGL.Entity
         public BoundingBoxFiltered boxf; // test!
         private const float boxfMinX = 0.5f, boxfMinY = 0.125f, boxfMinZ = 1f;
         private const float boxfMaxX = 0.5f, boxfMaxY = 0.125f, boxfMaxZ = 1f;
+        private Vector3 min;
+        private Vector3 max;
         
         private Vector3[] rayColors;
         private Vector3 currentRayColor;
@@ -55,18 +57,18 @@ namespace FZtarOGL.Entity
 
             boxfes = new List<BoundingBoxFiltered>();
             
-            Vector3 min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
+            min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
             boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerRay, BoxFilters.MaskPlayerRay);
             
             boxfes.Add(boxf);
 
             // shader colors
             rayColors = new Vector3[4];
-            rayColors[0] = new Vector3(255/255f, 255/255f, 255/255f);
-            rayColors[1] = new Vector3(240/255f, 105/255f, 35/255f);
-            rayColors[2] = new Vector3(255/255f, 170/255f, 50/255f);
-            rayColors[3] = new Vector3(255/255f, 230/255f, 90/255f);
+            rayColors[0] = ModelColors.PlayerRayColor1;
+            rayColors[1] = ModelColors.PlayerRayColor2;
+            rayColors[2] = ModelColors.PlayerRayColor3;
+            rayColors[3] = ModelColors.PlayerRayColor4;
             currentRayColor = rayColors[0];
         }
 
@@ -96,8 +98,8 @@ namespace FZtarOGL.Entity
                          Matrix.CreateTranslation(modelPos);
 
             // bb
-            Vector3 min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
+            min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
             boxf.Box = new BoundingBox(min, max);
 
             boxfes.Clear();
@@ -134,7 +136,7 @@ namespace FZtarOGL.Entity
         {
             switch (filter)
             {
-                case BoxFilters.FilterTower:
+                case BoxFilters.FilterObstacle:
                     ToDestroy = true;
                     break;
             }

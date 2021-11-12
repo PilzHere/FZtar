@@ -1,46 +1,67 @@
-using System;
 using System.Collections.Generic;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
-using FZtarOGL.Camera;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input;
 
 namespace FZtarOGL.Entity
 {
     public class Tower : Entity
     {
-        public Matrix ModelTrans;
-        public Vector3 ModelScale;
-        public Vector3 ModelRot;
-        public Vector3 ModelPos;
+        private Matrix ModelTrans;
+        private Vector3 ModelScale;
+        private Vector3 ModelRot;
+        private Vector3 ModelPos;
 
         private Model _model;
+        private Vector3 _modelColor;
+        private ModelMesh _towerSignalMesh01, _towerSignalMesh02, _towerSignalMesh03, _towerSignalMesh04;
 
-        public Model Model => _model;
-        public List<BoundingBoxFiltered> boxfes; // public for testing! cange to private
+        private List<BoundingBoxFiltered> boxfes;
 
         private Screen.Screen _screen;
 
         private AssetManager _assMan;
         
-        public BoundingBoxFiltered boxf; // test!
-        float bbWidth = 4;
-        float bbHeight = 10; // origo in bottom.
-        float bbLength = 4;
+        public BoundingBoxFiltered boxf01, boxf02, boxf03;
         
-        private const float boxfMinX = 1f, boxfMinY = 0f, boxfMinZ = 1f;
-        private const float boxfMaxX = 1f, boxfMaxY = 10f, boxfMaxZ = 1f;
+        // Bodies
+        // tower
+        private const float boxf01MinX = 1.5f, boxf01MinY = 0f, boxf01MinZ = 1.5f;
+        private const float boxf01MaxX = 1.5f, boxf01MaxY = 15f, boxf01MaxZ = 1.5f;
+        //base bottom
+        private const float boxf02MinX = 3f, boxf02MinY = 0f, boxf02MinZ = 3f;
+        private const float boxf02MaxX = 3f, boxf02MaxY = 1f, boxf02MaxZ = 3f;
+        //base top
+        private const float boxf03MinX = 2f, boxf03MinY = -1f, boxf03MinZ = -2f;
+        private const float boxf03MaxX = 2f, boxf03MaxY = 2f, boxf03MaxZ = -2f;
 
-        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position)
+        private Vector3 min01;
+        private Vector3 max01;
+        private Vector3 min02;
+        private Vector3 max02;
+        private Vector3 min03;
+        private Vector3 max03;
+        
+        private Vector3[] towerSignalColors;
+        private Vector3 currenttowerSignalColor;
+
+        //private Random rnd = new Random();
+        private int towerSignalColorOrdered;
+        private float timerTowerSignalColor;
+
+        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 modelColor)
         {
             _screen = screen;
             _assMan = assMan;
+            _modelColor = modelColor;
 
             _model = _assMan.TowerModel;
+            _towerSignalMesh01 = _model.Meshes[1];
+            _towerSignalMesh02 = _model.Meshes[2];
+            _towerSignalMesh03 = _model.Meshes[3];
+            _towerSignalMesh04 = _model.Meshes[4];
 
             ModelScale = Vector3.One;
             ModelRot = Vector3.Zero;
@@ -53,27 +74,31 @@ namespace FZtarOGL.Entity
 
             // Boundingboxes, one huge from all meshes min/max combined.
             boxfes = new List<BoundingBoxFiltered>();
-
-            /*Matrix[] transforms = new Matrix[_model.Bones.Count];
-            _model.CopyAbsoluteBoneTransformsTo(transforms);
-
-            foreach (ModelMesh mesh in _model.Meshes)
-            {
-                Matrix meshTransform = transforms[mesh.ParentBone.Index];
-                meshTransform = Matrix.CreateScale(1); // Why do I need this?
-                boundingBoxes.Add(BoundingBoxBuilder.BuildBoundingBox(mesh, meshTransform));
-            }*/
             
-            // test
-            float offsetX = bbWidth / 2f;
-            float offsetY = bbHeight;
-            float offsetZ = bbLength/2f;
-            // Remember to switch Z with Y! because wrong in blender!
-            Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterTower, BoxFilters.MaskTower);
+            min01 = new Vector3(ModelTrans.Translation.X - boxf01MinX, ModelTrans.Translation.Y - boxf01MinY,ModelTrans.Translation.Z - boxf01MinZ);
+            max01 = new Vector3(ModelTrans.Translation.X + boxf01MaxX, ModelTrans.Translation.Y + boxf01MaxY,ModelTrans.Translation.Z + boxf01MaxZ);
+            min02 = new Vector3(ModelTrans.Translation.X - boxf02MinX, ModelTrans.Translation.Y - boxf02MinY,ModelTrans.Translation.Z - boxf02MinZ);
+            max02 = new Vector3(ModelTrans.Translation.X + boxf02MaxX, ModelTrans.Translation.Y + boxf02MaxY,ModelTrans.Translation.Z + boxf02MaxZ);
+            min03 = new Vector3(ModelTrans.Translation.X - boxf03MinX, ModelTrans.Translation.Y - boxf03MinY,ModelTrans.Translation.Z - boxf03MinZ);
+            max03 = new Vector3(ModelTrans.Translation.X + boxf03MaxX, ModelTrans.Translation.Y + boxf03MaxY,ModelTrans.Translation.Z + boxf03MaxZ);
             
-            boxfes.Add(boxf);
+            boxf01 = new BoundingBoxFiltered(this, min01, max01, BoxFilters.FilterObstacle, BoxFilters.MaskObstacle);
+            boxf02 = new BoundingBoxFiltered(this, min02, max02, BoxFilters.FilterObstacle, BoxFilters.MaskObstacle);
+            boxf03 = new BoundingBoxFiltered(this, min03, max03, BoxFilters.FilterObstacle, BoxFilters.MaskObstacle);
+            
+            boxfes.Add(boxf01);
+            boxfes.Add(boxf02);
+            boxfes.Add(boxf03);
+            
+            // shader colors
+            towerSignalColors = new Vector3[6];
+            towerSignalColors[0] = ModelColors.Red2;
+            towerSignalColors[1] = ModelColors.Red1;
+            towerSignalColors[2] = ModelColors.Orange;
+            towerSignalColors[3] = ModelColors.Yellow;
+            towerSignalColors[4] = ModelColors.Orange;
+            towerSignalColors[5] = ModelColors.Red1;
+            currenttowerSignalColor = towerSignalColors[0];
         }
 
         public override void Tick(float dt)
@@ -94,21 +119,43 @@ namespace FZtarOGL.Entity
                          Matrix.CreateRotationZ(ModelRot.Z) *
                          Matrix.CreateTranslation(ModelPos);
             
-            // test
-            float offsetX = bbWidth / 2f;
-            float offsetY = bbHeight;
-            float offsetZ = bbLength/2f;
-            // Remember to switch Z with Y!
-            Vector3 min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
-            boxf.Box = new BoundingBox(min, max);
+            min01 = new Vector3(ModelTrans.Translation.X - boxf01MinX, ModelTrans.Translation.Y - boxf01MinY,ModelTrans.Translation.Z - boxf01MinZ);
+            max01 = new Vector3(ModelTrans.Translation.X + boxf01MaxX, ModelTrans.Translation.Y + boxf01MaxY,ModelTrans.Translation.Z + boxf01MaxZ);
+            min02 = new Vector3(ModelTrans.Translation.X - boxf02MinX, ModelTrans.Translation.Y - boxf02MinY,ModelTrans.Translation.Z - boxf02MinZ);
+            max02 = new Vector3(ModelTrans.Translation.X + boxf02MaxX, ModelTrans.Translation.Y + boxf02MaxY,ModelTrans.Translation.Z + boxf02MaxZ);
+            min03 = new Vector3(ModelTrans.Translation.X - boxf03MinX, ModelTrans.Translation.Y - boxf03MinY,ModelTrans.Translation.Z - boxf03MinZ);
+            max03 = new Vector3(ModelTrans.Translation.X + boxf03MaxX, ModelTrans.Translation.Y + boxf03MaxY,ModelTrans.Translation.Z + boxf03MaxZ);
+            
+            boxf01.Box = new BoundingBox(min01, max01);
+            boxf02.Box = new BoundingBox(min02, max02);
+            boxf03.Box = new BoundingBox(min03, max03);
 
             boxfes.Clear();
-            boxfes.Add(boxf);
+            boxfes.Add(boxf01);
+            boxfes.Add(boxf02);
+            boxfes.Add(boxf03);
             
             foreach (var boxf in boxfes)
             {
                 _screen.BoundingBoxesFiltered.Add(boxf);
+            }
+            
+            // thrustercolor
+            timerTowerSignalColor += dt;
+            const float timeRayColor = 0.025f;
+            bool changeColor = timerTowerSignalColor >= timeRayColor;
+            if (changeColor)
+            {
+                // ordered
+                towerSignalColorOrdered++;
+                if (towerSignalColorOrdered > towerSignalColors.Length - 1) towerSignalColorOrdered = 0;
+                currenttowerSignalColor = towerSignalColors[towerSignalColorOrdered];
+
+                // random
+                //int rayColor = rnd.Next(0, rayColors.Length);
+                //currentRayColor = rayColors[rayColor];
+
+                timerTowerSignalColor = 0;
             }
         }
 
@@ -131,7 +178,12 @@ namespace FZtarOGL.Entity
 
         public override void Draw3D(float dt)
         {
-            _screen.DrawModel(_model, ModelTrans);
+            _screen.DrawModelWithColor(_model, ModelTrans, _modelColor);
+            
+            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh01, ModelTrans, currenttowerSignalColor);
+            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh02, ModelTrans, currenttowerSignalColor);
+            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh03, ModelTrans, currenttowerSignalColor);
+            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh04, ModelTrans, currenttowerSignalColor);
         }
 
         public override void DrawBoundingBox()

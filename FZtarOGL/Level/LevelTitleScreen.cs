@@ -1,5 +1,3 @@
-using System.Numerics;
-using System.Threading.Tasks.Dataflow;
 using FZtarOGL.Asset;
 using FZtarOGL.Camera;
 using FZtarOGL.Entity;
@@ -7,12 +5,10 @@ using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace FZtarOGL.Level
 {
-    public class Level02 : Level
+    public class LevelTitleScreen : Level
     {
         private int _segmentDefaultLength = 200;
         private int _segmentNextLength = 200;
@@ -21,77 +17,15 @@ namespace FZtarOGL.Level
 
         private BasicEffect basicEffectPrimitives;
 
-        private Model floorModel01;
-        private Model floorModel02;
-        private Model floorModel03;
-        private Matrix floorModelTrans01;
-        private Matrix floorModelTrans02;
-        private Matrix floorModelTrans03;
-        private Vector3 floorModel01Pos;
-        private Vector3 floorModel02Pos;
-        private Vector3 floorModel03Pos;
-
-        private Model floorModel04;
-        private Model floorModel05;
-        private Model floorModel06;
-        private Matrix floorModelTrans04;
-        private Matrix floorModelTrans05;
-        private Matrix floorModelTrans06;
-        private Vector3 floorModelsFutherScale;
-        private Vector3 floorModel04Pos;
-        private Vector3 floorModel05Pos;
-        private Vector3 floorModel06Pos;
-        private float rotationY;
-
-        public Level02(Screen.Screen screen, AssetManager assMan, SpriteBatch spriteBatch) : base(screen, assMan,
+        public LevelTitleScreen(Screen.Screen screen, AssetManager assMan, SpriteBatch spriteBatch) : base(screen, assMan,
             spriteBatch)
         {
             isLocatedInSpace = true;
-            
-            BackgroundTexture = AssMan.Bg03;
-            FogColor1 = new Vector3(112 / 255f, 160 / 255f, 160 / 255f); // bg color horizon
+
+            BackgroundTexture = AssMan.Bg04;
+            FogColor1 = new Vector3(0 / 255f, 5 / 255f, 6 / 255f); // bg color horizon
             FogStart1 = 150;
             FogEnd1 = 200;
-
-            // close clouds
-            floorModel01 = AssMan.FloorCloudsModel;
-            floorModel02 = AssMan.FloorCloudsModel;
-            floorModel03 = AssMan.FloorCloudsModel;
-
-            floorModel01Pos = new Vector3(0, 0, 0);
-            floorModel02Pos = new Vector3(0, 0, -100);
-            floorModel03Pos = new Vector3(0, 0, -200);
-            floorModelTrans01 = Matrix.CreateScale(Vector3.One) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(0) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel01Pos);
-            floorModelTrans02 = Matrix.CreateScale(Vector3.One) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(0) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel02Pos);
-            floorModelTrans03 = Matrix.CreateScale(Vector3.One) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(0) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel03Pos);
-
-            // further clouds
-            floorModel04 = AssMan.FloorCloudsModel;
-            floorModel05 = AssMan.FloorCloudsModel;
-            floorModel06 = AssMan.FloorCloudsModel;
-
-            floorModel04Pos = new Vector3(0, -5, 0);
-            floorModel05Pos = new Vector3(0, -5, -200);
-            floorModel06Pos = new Vector3(0, -5, -400);
-
-            floorModelsFutherScale = new Vector3(2, 2, 2);
-            rotationY = MathHelper.ToRadians(180);
-
-            floorModelTrans04 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel04Pos);
-            floorModelTrans05 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel05Pos);
-            floorModelTrans06 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) *
-                                Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(floorModel06Pos);
 
             const float backgroundPosOffsetX = 128;
             const float backgroundPosOffsetY = 11 - 2; // was 11
@@ -99,10 +33,10 @@ namespace FZtarOGL.Level
             BackgroundPosInt = new Vector2((int)BackgroundPos.X, (int)BackgroundPos.Y);
             BackgroundOrigin = new Vector2(256, 256);
 
-            levelSong = assMan.songLevel2;
+            levelSong = assMan.songLevel3;
             MediaPlayer.Play(levelSong);
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = 0.2f;
+            MediaPlayer.Volume = GameSettings.GameSettings.MusicVolume;
 
             basicEffectPrimitives = new BasicEffect(screen.GraphicsDevice);
 
@@ -145,45 +79,6 @@ namespace FZtarOGL.Level
 
             if (floorDotsPos.Z > 10) floorDotsPos.Z -= 10;
 
-            //floor models close
-            float speedZBoost = 2;
-            float closeModelsSpeed = VirtualSpeedZ * speedZBoost * dt;
-            floorModel01Pos.Z += closeModelsSpeed;
-            floorModel02Pos.Z += closeModelsSpeed;
-            floorModel03Pos.Z += closeModelsSpeed;
-
-            float maxDistZ = 50;
-            float startZ = 300;
-            if (floorModel01Pos.Z >= maxDistZ) floorModel01Pos.Z -= startZ;
-            if (floorModel02Pos.Z >= maxDistZ) floorModel02Pos.Z -= startZ;
-            if (floorModel03Pos.Z >= maxDistZ) floorModel03Pos.Z -= startZ;
-
-            floorModelTrans01 = Matrix.CreateTranslation(floorModel01Pos);
-            floorModelTrans02 = Matrix.CreateTranslation(floorModel02Pos);
-            floorModelTrans03 = Matrix.CreateTranslation(floorModel03Pos);
-
-            //floor models further
-            float furtherModelsSpeed = VirtualSpeedZ * dt;
-            floorModel04Pos.Z += furtherModelsSpeed;
-            floorModel05Pos.Z += furtherModelsSpeed;
-            floorModel06Pos.Z += furtherModelsSpeed;
-
-            maxDistZ = 100;
-            startZ = 600;
-            if (floorModel04Pos.Z >= maxDistZ) floorModel04Pos.Z -= startZ;
-            if (floorModel05Pos.Z >= maxDistZ) floorModel05Pos.Z -= startZ;
-            if (floorModel06Pos.Z >= maxDistZ) floorModel06Pos.Z -= startZ;
-
-            floorModelTrans04 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) * Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) *
-                                Matrix.CreateTranslation(floorModel04Pos);
-            floorModelTrans05 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) * Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) *
-                                Matrix.CreateTranslation(floorModel05Pos);
-            floorModelTrans06 = Matrix.CreateScale(floorModelsFutherScale) * Matrix.CreateRotationX(0) * Matrix.CreateRotationY(rotationY) *
-                                Matrix.CreateRotationZ(0) *
-                                Matrix.CreateTranslation(floorModel06Pos);
-
             // spawn entities
             if (!_entitiesSpawned)
             {
@@ -209,7 +104,7 @@ namespace FZtarOGL.Level
                         // messages
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet01Tex, AssMan.Font02_08,
-                            "Hey! I can see my\nhouse from here!", 3));
+                            "In space...\nNo one can hear\nyou scream.", 4));
                         break;
                     case 2:
 
@@ -289,15 +184,6 @@ namespace FZtarOGL.Level
 
         public override void DrawFloor()
         {
-            // further clouds
-            Screen.DrawModelUnlit(floorModel04, floorModelTrans04);
-            Screen.DrawModelUnlit(floorModel05, floorModelTrans05);
-            Screen.DrawModelUnlit(floorModel06, floorModelTrans06);
-
-            // close clouds
-            Screen.DrawModelUnlit(floorModel01, floorModelTrans01);
-            Screen.DrawModelUnlit(floorModel02, floorModelTrans02);
-            Screen.DrawModelUnlit(floorModel03, floorModelTrans03);
         }
 
         public override void DrawBackground(float dt, float rotation)

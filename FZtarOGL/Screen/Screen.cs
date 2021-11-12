@@ -7,6 +7,7 @@ using FZtarOGL.Camera;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 
 namespace FZtarOGL.Screen
 {
@@ -23,6 +24,7 @@ namespace FZtarOGL.Screen
         public readonly GraphicsDevice GraphicsDevice;
 
         protected PerspectiveCamera Cam3d1;
+        protected Vector3 _cam3dPos;
 
         public PerspectiveCamera Cam3d => Cam3d1;
 
@@ -79,19 +81,19 @@ namespace FZtarOGL.Screen
                 // 1. Add boxes first, Entitiy -> screen -> list.add.
                 //Console.WriteLine("#boxes: " + boxesFiltered.Count);
                 // 2. do something
-                foreach (var boxf1 in boxesFiltered)
+                foreach (var currentBoxf in boxesFiltered)
                 {
-                    foreach (var boxf2 in boxesFiltered)
+                    foreach (var otherBoxf in boxesFiltered)
                     {
-                        bool isSameBox = boxf1 == boxf2;
+                        bool isSameBox = currentBoxf == otherBoxf;
                         if (!isSameBox)
                         {
-                            bool containsBit = (boxf1.Mask & boxf2.Filter) == boxf2.Filter;
+                            bool containsBit = (currentBoxf.Mask & otherBoxf.Filter) == otherBoxf.Filter;
                             if (containsBit)
                             {
-                                if (boxf1.Box.Intersects(boxf2.Box))
+                                if (currentBoxf.Box.Intersects(otherBoxf.Box))
                                 {
-                                    boxf1.Parent.OnCollision(boxf2.Filter, dt);
+                                    currentBoxf.Parent.OnCollision(otherBoxf.Filter, dt);
                                 }
                             }
                         }
@@ -158,7 +160,7 @@ namespace FZtarOGL.Screen
 
         public abstract void DrawModel(Model model, Matrix modelTransform);
         
-        //public abstract void DrawTransparentModels(Model model, Matrix modelTransform);
+        public abstract void DrawModelWithColor(Model model, Matrix modelTransform, Vector3 color);
 
         // Initialize an array of indices for the box. 12 lines require 24 indices
         protected short[] bBoxIndices =

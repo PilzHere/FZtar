@@ -6,6 +6,7 @@ using FZtarOGL.Screen;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.Input;
 using gs = FZtarOGL.GameSettings.GameSettings;
 
@@ -42,7 +43,7 @@ namespace FZtarOGL
 
         public Game1()
         {
-            GameTitle = "FZtar";
+            GameTitle = "Frag Ztar";
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -64,7 +65,11 @@ namespace FZtarOGL
             _windowedLastWidth = Window.ClientBounds.Width;
             _windowedLastHeight = Window.ClientBounds.Height;
 
+            GameSettings.GameSettings.MusicVolume = 0; // change!
+
             base.Initialize();
+            
+            Window.Title = GameTitle;
         }
         
         private void UpdateWindowResize(GameTime gameTime)
@@ -130,7 +135,8 @@ namespace FZtarOGL
             _fboTexture = _fbo;
 
             _screenManager = new ScreenManager();
-            _screenManager.AddScreen(new PlayScreen(this, _assMan, _spriteBatch, GraphicsDevice/*, _debugGuiRenderer*/));
+            _screenManager.AddScreen(new TitleScreen(this, _assMan, _spriteBatch, GraphicsDevice));
+            //_screenManager.AddScreen(new PlayScreen(this, _assMan, _spriteBatch, GraphicsDevice));
         }
         
         private void UpdateRunTime(GameTime gameTime)
@@ -247,6 +253,8 @@ namespace FZtarOGL
         
         protected override void OnExiting(object sender, EventArgs args)
         {
+            MediaPlayer.Stop();
+            
             _screenManager.RemoveAllScreens();
 
             _spriteBatch.Dispose();

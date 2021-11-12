@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace FZtarOGL
 {
@@ -8,7 +9,9 @@ namespace FZtarOGL
         static void Main()
         {
             using (var game = new Game1())
+            {
                 game.Run();
+            }
         }
     }
 }
