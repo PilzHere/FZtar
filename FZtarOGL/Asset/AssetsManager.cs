@@ -86,6 +86,7 @@ namespace FZtarOGL.Asset
         public BitmapFont Font01_08;
         public BitmapFont Font01_16;
         public BitmapFont Font01_32;
+        
         public BitmapFont Font02_08;
         public BitmapFont Font02_16;
         public BitmapFont Font02_32;
@@ -185,7 +186,7 @@ namespace FZtarOGL.Asset
             Font01_08 = _contentManager.Load<BitmapFont>(_font01_08Loc);
             Font01_16 = _contentManager.Load<BitmapFont>(_font01_16Loc);
             Font01_32 = _contentManager.Load<BitmapFont>(_font01_32Loc);
-
+            
             Font02_08 = _contentManager.Load<BitmapFont>(_font02_08Loc);
             Font02_16 = _contentManager.Load<BitmapFont>(_font02_16Loc);
             Font02_32 = _contentManager.Load<BitmapFont>(_font02_32Loc);

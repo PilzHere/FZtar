@@ -130,8 +130,8 @@ namespace FZtarOGL.Screen
             String choice05 = "QUIT GAME";
             SpriteBatch.DrawString(_font02_16, choice05, new Vector2(256/2f - _font02_16.MeasureString(choice05).Width/2f, 224/2f + _font02_16.LineHeight * 4), Color.White);
             
-            String credits01 = "Coded by Christian \"PilzHere\" Pilz";
-            SpriteBatch.DrawString(_font02_16, credits01, new Vector2(256/2f - _font02_16.MeasureString(credits01).Width/2f, 224/2f + _font02_16.LineHeight * 4), Color.White);
+            String credits01 = "Code by Christian \"PilzHere\" Pilz";
+            SpriteBatch.DrawString(_font02_08, credits01, new Vector2(256/2f - _font02_08.MeasureString(credits01).Width/2f, 224 - _font02_08.LineHeight), Color.White);
             
             SpriteBatch.End();
         }
