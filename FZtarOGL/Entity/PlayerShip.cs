@@ -5,6 +5,7 @@ using FZtarOGL.Box;
 using FZtarOGL.Camera;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Input;
@@ -20,7 +21,7 @@ namespace FZtarOGL.Entity
 
         private Model _model;
         private ModelMesh _thrusterMesh;
-        
+
         private Vector3[] thrusterColors;
         private Vector3 currentThrusterColor;
         private int thrusterColorOrdered;
@@ -93,7 +94,7 @@ namespace FZtarOGL.Entity
             _thrusterMesh = _model.Meshes[1];
 
             ModelPos = position;
-            ModelScale = new Vector3(1, 1, 1);
+            ModelScale = Vector3.One;
             ModelTrans = Matrix.CreateScale(ModelScale) *
                          Matrix.CreateRotationX(ModelRot.X) *
                          Matrix.CreateRotationY(ModelRot.Y) *
@@ -103,16 +104,18 @@ namespace FZtarOGL.Entity
             _viewport = new Viewport(0, 0, 256, 224);
 
             _hp = _maxHp;
-            _power = _maxPower;
+            _power = 0;
 
             boxfes = new List<BoundingBoxFiltered>();
-            
-            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
+
+            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,
+                ModelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,
+                ModelTrans.Translation.Z + boxfMaxZ);
             boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerShip, BoxFilters.MaskPlayerShip);
-            
+
             boxfes.Add(boxf);
-            
+
             // thruster colors
             thrusterColors = new Vector3[4];
             thrusterColors[0] = ModelColors.PlayerThrusterColor1;
@@ -124,11 +127,25 @@ namespace FZtarOGL.Entity
 
         private bool keyUpIsPressed;
         private bool keySpaceIsPressed;
-        
+
         private float rotationGlobalY;
+
+        private Keys keyMoveUp = Keys.W;
+        private Keys keyMoveDown = Keys.S;
 
         public void Input(GameTime gt, float dt)
         {
+            if (GameSettings.GameSettings.InvertVerticalMovement)
+            {
+                keyMoveUp = Keys.S;
+                keyMoveDown = Keys.W;
+            }
+            else
+            {
+                keyMoveUp = Keys.W;
+                keyMoveDown = Keys.S;
+            }
+
             // TODO: For testing!
             if (KeyboardExtended.GetState().IsKeyUp(Keys.Space))
             {
@@ -141,7 +158,7 @@ namespace FZtarOGL.Entity
                 keySpaceIsPressed = true;
             }
             // TEsting end
-            
+
             if (KeyboardExtended.GetState().IsKeyUp(Keys.Up))
             {
                 keyUpIsPressed = false;
@@ -149,30 +166,30 @@ namespace FZtarOGL.Entity
 
             if (!keyUpIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Up))
             {
-                _screen._Entities.Add(new PlayerRay(_screen, _assMan, ModelPos, ModelRot, this));
+                _screen._Entities.Add(new PlayerRay(_screen, _assMan, ModelPos, ModelRot));
                 keyUpIsPressed = true;
             }
 
             float rotXSpeedBoost = 1;
-            
-            if (KeyboardExtended.GetState().IsKeyDown(Keys.W))
+
+            if (KeyboardExtended.GetState().IsKeyDown(keyMoveUp))
             {
                 if (ModelRot.X < 0) ModelRot.X += rotXSpeed * rotXSpeedBoost * dt;
                 else ModelRot.X += rotXSpeed * dt;
-                
+
                 ModelPos.Y += speedY * dt;
             }
 
-            if (KeyboardExtended.GetState().IsKeyDown(Keys.S))
+            if (KeyboardExtended.GetState().IsKeyDown(keyMoveDown))
             {
                 if (ModelRot.X > 0) ModelRot.X -= rotXSpeed * rotXSpeedBoost * dt;
                 else ModelRot.X -= rotXSpeed * dt;
-                
+
                 ModelPos.Y -= speedY * dt;
             }
 
             const float rotYSpeedBoost = 1;
-            
+
             if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
             {
                 ModelPos.X -= speedX * dt;
@@ -180,9 +197,9 @@ namespace FZtarOGL.Entity
                 if (ModelRot.Y < 0) ModelRot.Y += rotYSpeed * rotYSpeedBoost * dt;
                 else ModelRot.Y += rotYSpeed * dt;
                 //playerShipModelRot.Z += playerShipRotZSpeed * dt;
-                
+
                 rotationGlobalY -= 1 * dt;
-                
+
                 ModelRot.Z += 3 * dt;
             }
 
@@ -195,11 +212,11 @@ namespace FZtarOGL.Entity
                 //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
 
                 rotationGlobalY += 1 * dt;
-                
+
                 ModelRot.Z -= 3 * dt;
             }
         }
-        
+
         public override void Tick(float dt)
         {
             if (gotHit)
@@ -213,7 +230,7 @@ namespace FZtarOGL.Entity
                     gotHit = false;
                 }
             }
-            
+
             //speedZ = _screen.CurrentLevel.VirtualSpeedZ;
 
             //ModelPos.Z -= speedZ * dt; // move forward
@@ -237,7 +254,7 @@ namespace FZtarOGL.Entity
                 if (ModelRot.X < -modelRotXDeadZone) ModelRot.X += rotBackSpeed * dt;
                 else ModelRot.X = 0;
             }
-            
+
             // Z rot
             if (ModelRot.Z > 0)
             {
@@ -250,7 +267,7 @@ namespace FZtarOGL.Entity
                 if (ModelRot.Z < -modelRotZDeadZone) ModelRot.Z += rotBackSpeed * dt;
                 else ModelRot.Z = 0;
             }
-            
+
             // Y rot 
             if (ModelRot.Y > 0)
             {
@@ -263,7 +280,7 @@ namespace FZtarOGL.Entity
                 if (ModelRot.Y < -modelRotYDeadZone) ModelRot.Y += rotBackSpeed * dt;
                 else ModelRot.Y = 0;
             }
-            
+
             // Z rot
             if (ModelRot.Z > 0)
             {
@@ -292,22 +309,25 @@ namespace FZtarOGL.Entity
 
             if (ModelRot.X < -rotXMaxAngle) ModelRot.X = -rotXMaxAngle;
             if (ModelRot.X > rotXMaxAngle) ModelRot.X = rotXMaxAngle;
-            
+
             if (ModelRot.Y < -rotYMaxAngle) ModelRot.Y = -rotYMaxAngle;
             if (ModelRot.Y > rotYMaxAngle) ModelRot.Y = rotYMaxAngle;
-            
+
             if (ModelRot.Z < -rotZMaxAngle) ModelRot.Z = -rotZMaxAngle;
             if (ModelRot.Z > rotZMaxAngle) ModelRot.Z = rotZMaxAngle;
 
             // trans
-            ModelTrans = Matrix.CreateRotationX(ModelRot.X) *
+            ModelTrans = Matrix.CreateScale(ModelScale) *
+                         Matrix.CreateRotationX(ModelRot.X) *
                          Matrix.CreateRotationY(ModelRot.Y) *
                          Matrix.CreateRotationZ(ModelRot.Z) *
                          Matrix.CreateTranslation(ModelPos);
-            
+
             // bb
-            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,ModelTrans.Translation.Z - boxfMinZ);
-            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,ModelTrans.Translation.Z + boxfMaxZ);
+            min = new Vector3(ModelTrans.Translation.X - boxfMinX, ModelTrans.Translation.Y - boxfMinY,
+                ModelTrans.Translation.Z - boxfMinZ);
+            max = new Vector3(ModelTrans.Translation.X + boxfMaxX, ModelTrans.Translation.Y + boxfMaxY,
+                ModelTrans.Translation.Z + boxfMaxZ);
             boxf.Box = new BoundingBox(min, max);
 
             boxfes.Clear();
@@ -317,9 +337,9 @@ namespace FZtarOGL.Entity
             {
                 _screen.BoundingBoxesFiltered.Add(boxf);
             }
-            
+
             //_screen.BoundingBoxesFilteredLists.Add(boxes);
-            
+
             // thrustercolor
             timerThrusterColor += dt;
             const float timeRayColor = 0.025f;
@@ -337,16 +357,16 @@ namespace FZtarOGL.Entity
 
                 timerThrusterColor = 0;
             }
-            
+
             // aim
             const float camPlayerDist = 6;
             //const float fovFar = float.MinValue + camPlayerDist;
             const float fovFar = -200 + camPlayerDist;
-            
+
             _aimPos3d.X = ModelTrans.Forward.X * fovFar * dt;
             _aimPos3d.Y = ModelTrans.Forward.Y * fovFar * dt;
             _aimPos3d.Z = ModelTrans.Forward.Z * fovFar * dt;
-            
+
             //_aimPos3d = ModelTrans.Translation + new Vector3(0, 0, fovFar);
             _aimPos2d = _viewport.Project(_aimPos3d, _cam.Projection, _cam.View, _cam.World);
             _aimPos2dInt.X = (int)_aimPos2d.X - _aimTex.Width / 2;
@@ -360,16 +380,32 @@ namespace FZtarOGL.Entity
                 case BoxFilters.FilterObstacle:
                     if (!gotHit)
                     {
-                        TakeDamage(5);
-                        Console.WriteLine("PLAYERSHIP HIT");
+                        TakeDamage(10);
                         gotHit = true;
                     }
+
                     break;
                 case BoxFilters.FilterRingHealth:
                     Heal(10);
                     break;
                 case BoxFilters.FilterRingPower:
                     IncreasePower(10);
+                    break;
+                case BoxFilters.FilterEnemyShip:
+                    if (!gotHit)
+                    {
+                        TakeDamage(10);
+                        gotHit = true;
+                    }
+
+                    break;
+                case BoxFilters.FilterEnemyRay:
+                    if (!gotHit)
+                    {
+                        TakeDamage(10);
+                        gotHit = true;
+                    }
+
                     break;
             }
         }
@@ -379,19 +415,23 @@ namespace FZtarOGL.Entity
             if (_hp < _maxHp) _hp += amount;
             if (_hp > _maxHp) _hp = _maxHp;
         }
-        
+
         private void TakeDamage(int amount)
         {
             if (_hp > 0) _hp -= amount;
             if (_hp < 0) _hp = 0;
+            
+            SoundEffectInstance sfx = _assMan.SfxPlayerHit.CreateInstance();
+            sfx.Volume = GameSettings.GameSettings.SfxVolume;
+            sfx.Play();
         }
-        
+
         private void IncreasePower(int amount)
         {
             if (_power < _maxPower) _power += amount;
             if (_power > _maxPower) _power = _maxPower;
         }
-        
+
         private void ReducePower(int amount)
         {
             if (_power > 0) _power -= amount;
@@ -404,7 +444,7 @@ namespace FZtarOGL.Entity
 
         private float _gotHitFlashTime = 0.033f;
         private float _gotHitFlashTimer;
-        
+
         public override void Draw3D(float dt)
         {
             if (gotHit)
@@ -420,11 +460,11 @@ namespace FZtarOGL.Entity
             if (toRenderShip)
             {
                 _screen.DrawModel(_model, ModelTrans);
-                
+
                 _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, ModelTrans, currentThrusterColor);
             }
         }
-        
+
         public override void DrawBoundingBox()
         {
             _screen.DrawBoundingBoxFiltered(boxfes, Matrix.Identity);
@@ -439,6 +479,15 @@ namespace FZtarOGL.Entity
 
         public override void Destroy()
         {
+            base.Destroy();
+            
+            ReducePower(_maxPower);
+            
+            SoundEffectInstance sfx = _assMan.SfxPlayerDeath.CreateInstance();
+            sfx.Volume = GameSettings.GameSettings.SfxVolume;
+            sfx.Play();
+            
+            _screen._EntitiesToAdd.Add(new Explosion01(_screen, _assMan, ModelPos));
         }
     }
 }

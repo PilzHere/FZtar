@@ -99,15 +99,15 @@ namespace FZtarOGL.Level
             BackgroundPosInt = new Vector2((int)BackgroundPos.X, (int)BackgroundPos.Y);
             BackgroundOrigin = new Vector2(256, 256);
 
-            levelSong = assMan.songLevel2;
-            MediaPlayer.Play(levelSong);
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = 0.2f;
+            BackgroundMusic = assMan.SongLevel2.CreateInstance();
+            BackgroundMusic.IsLooped = true;
+            BackgroundMusic.Volume = GameSettings.GameSettings.MusicVolume;
+            BackgroundMusic.Play();
 
             basicEffectPrimitives = new BasicEffect(screen.GraphicsDevice);
 
             const int dotPosStartX = -10;
-            const int dotPosY = 0;
+            const int dotPosY = -3;
             const int dotPosStartZ = 10;
             const int dotPosOffsetX = 4;
             const int dotPosOffsetZ = 10;
@@ -127,6 +127,8 @@ namespace FZtarOGL.Level
                     dotPosX += dotPosOffsetX;
                 }
             }
+            
+            screen.SetContinueLevel(ContinueLevel.Level02);
         }
 
         public override void Tick(GameTime gt, float dt)
@@ -192,14 +194,14 @@ namespace FZtarOGL.Level
                     case 0:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Gray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Gray, true));
 
                         break;
                     case 1:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
 
                         // pickus
                         Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -200)));
@@ -208,16 +210,16 @@ namespace FZtarOGL.Level
 
                         // messages
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
-                            AssMan.AvatarDrInet01Tex, AssMan.Font02_08,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
                             "Hey! I can see my\nhouse from here!", 3));
                         break;
                     case 2:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
 
                         // pickups
                         Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-3, 3, -200)));
@@ -228,25 +230,25 @@ namespace FZtarOGL.Level
                     case 3:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.Gray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.Gray, true));
 
                         break;
                     case 4:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(3, 0, -250), ModelColors.Gray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-3, 0, -250), ModelColors.Gray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(3, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-3, 0, -250), ModelColors.Gray, true));
 
                         break;
                 }
@@ -268,7 +270,7 @@ namespace FZtarOGL.Level
         public override void DrawGroundEffect(PerspectiveCamera cam, float dt)
         {
             // Draw dots on floor
-            basicEffectPrimitives.View = cam.View;
+            /*basicEffectPrimitives.View = cam.View;
             basicEffectPrimitives.Projection = cam.Projection;
             basicEffectPrimitives.VertexColorEnabled = true;
             basicEffectPrimitives.CurrentTechnique.Passes[0].Apply();
@@ -284,7 +286,7 @@ namespace FZtarOGL.Level
                     };
                     Screen.GraphicsDevice.DrawUserPrimitives(PrimitiveType.LineList, vertices, 0, 1);
                 }
-            }
+            }*/
         }
 
         public override void DrawFloor()

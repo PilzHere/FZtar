@@ -61,6 +61,7 @@ namespace FZtarOGL.Screen
         {
             _gameScreens.First().Destroy();
             _gameScreens.Pop();
+            _gameScreens.First().Reset();
             _removeScreen = false;
         }
         

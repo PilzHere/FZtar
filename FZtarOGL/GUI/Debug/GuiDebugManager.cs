@@ -8,6 +8,12 @@ namespace FZtarOGL.GUI.Debug
         private Game1 _game;
         private Screen.Screen _screen;
 
+        public Screen.Screen Screen
+        {
+            get => _screen;
+            set => _screen = value;
+        }
+
         private ElementGameStats _elementGameStats;
         private ElementProfiler _elementProfiler;
         

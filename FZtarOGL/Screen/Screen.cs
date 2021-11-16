@@ -4,10 +4,11 @@ using System.Linq;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Camera;
+using FZtarOGL.Entity;
+using FZtarOGL.Level;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 
 namespace FZtarOGL.Screen
 {
@@ -19,6 +20,10 @@ namespace FZtarOGL.Screen
 
         protected long _modelsDrawn;
 
+        protected PlayerShip PlayerShip1;
+
+        public PlayerShip PlayerShip => PlayerShip1;
+
         public long ModelsDrawn => _modelsDrawn;
 
         public readonly GraphicsDevice GraphicsDevice;
@@ -29,6 +34,9 @@ namespace FZtarOGL.Screen
         public PerspectiveCamera Cam3d => Cam3d1;
 
         protected List<Entity.Entity> Entities;
+        protected List<Entity.Entity> EntitiesToAdd;
+        public List<Entity.Entity> _Entities => Entities;
+        public List<Entity.Entity> _EntitiesToAdd => EntitiesToAdd;
 
         public Level.Level CurrentLevel;
 
@@ -52,6 +60,7 @@ namespace FZtarOGL.Screen
             GraphicsDevice = Game.GraphicsDevice;
 
             Entities = new List<Entity.Entity>();
+            EntitiesToAdd = new List<Entity.Entity>();
             BoundingBoxesFiltered = new List<BoundingBoxFiltered>();
             transparentModels = new List<TransparentModel>();
 
@@ -73,6 +82,16 @@ namespace FZtarOGL.Screen
         
         public abstract void Input(GameTime gt, float dt);
         public abstract void Tick(GameTime gt, float dt);
+
+        public void AddQueuedEntities()
+        {
+            foreach (var entity in _EntitiesToAdd)
+            {
+                Entities.Add(entity);
+            }
+            
+            EntitiesToAdd.Clear();
+        }
 
         public void CheckCollisions(List<BoundingBoxFiltered> boxesFiltered, float dt)
         {
@@ -113,7 +132,7 @@ namespace FZtarOGL.Screen
             {
                 foreach (var transModel in transparentModels)
                 {
-                    transModel.DistanceFromCam = Vector3.DistanceSquared(cam.Position, transModel.ModelTrans.Translation);
+                    transModel.DistanceFromCam = Vector3.Distance(cam.Position, transModel.ModelTrans.Translation);
                 }
 
                 transparentModels = transparentModels.OrderByDescending(o => o.DistanceFromCam).ToList();
@@ -201,11 +220,21 @@ namespace FZtarOGL.Screen
             }
         }
 
+        public abstract void Reset();
+        
         public virtual void Destroy()
         {
             RemoveAllEntities();
         }
 
-        public List<Entity.Entity> _Entities => Entities;
+        public void SetContinueLevel(ContinueLevel level)
+        {
+            Game.ContinueLevel = level;
+        }
+        
+        public ContinueLevel GetContinueLevel()
+        {
+            return Game.ContinueLevel;
+        }
     }
 }

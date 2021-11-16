@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FZtarOGL.Asset;
 using FZtarOGL.Camera;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.BitmapFonts;
@@ -17,7 +18,7 @@ namespace FZtarOGL.Level
         protected SpriteBatch SpriteBatch;
         protected AssetManager AssMan;
 
-        protected Song levelSong;
+        protected SoundEffectInstance BackgroundMusic;
         protected bool isLocatedInSpace;
 
         public bool IsLocatedInSpace => isLocatedInSpace;
@@ -55,6 +56,14 @@ namespace FZtarOGL.Level
 
         protected bool MoveEverythingForward;
 
+        protected bool playerIsDead;
+
+        public bool PlayerIsDead
+        {
+            get => playerIsDead;
+            set => playerIsDead = value;
+        }
+
         public bool MoveEverythingForward1
         {
             get => MoveEverythingForward;
@@ -78,10 +87,31 @@ namespace FZtarOGL.Level
             MoveEverythingForward = true;
         }
 
+        public void StopMusic()
+        {
+            BackgroundMusic.Stop();
+        }
+        
+        public virtual void ResetMusic()
+        {
+            BackgroundMusic.IsLooped = true;
+            BackgroundMusic.Volume = GameSettings.GameSettings.MusicVolume;
+            BackgroundMusic.Play();
+        }
+
         public virtual void Tick(GameTime gt, float dt)
         {
-            if (MoveEverythingForward) VirtualSpeedZ = VirtualSpeedZStd;
+            if (MoveEverythingForward)
+            {
+                if (!playerIsDead) VirtualSpeedZ = VirtualSpeedZStd;
+            }
             else VirtualSpeedZ = 0;
+            
+            if (playerIsDead)
+            {
+                VirtualSpeedZ -= 10 * dt;
+                if (VirtualSpeedZ < 0) VirtualSpeedZ = 0;
+            }
             
             VirtualTravelDistance += VirtualSpeedZ * dt;
 

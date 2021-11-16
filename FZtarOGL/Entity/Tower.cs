@@ -3,6 +3,7 @@ using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FZtarOGL.Entity
@@ -51,11 +52,14 @@ namespace FZtarOGL.Entity
         private int towerSignalColorOrdered;
         private float timerTowerSignalColor;
 
-        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 modelColor)
+        private bool _useSignals;
+
+        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 modelColor, bool useSignals)
         {
             _screen = screen;
             _assMan = assMan;
             _modelColor = modelColor;
+            _useSignals = useSignals;
 
             _model = _assMan.TowerModel;
             _towerSignalMesh01 = _model.Meshes[1];
@@ -163,11 +167,13 @@ namespace FZtarOGL.Entity
         {
             switch (filter)
             {
-                case BoxFilters.FilterPlayerShip:
+                //case BoxFilters.FilterPlayerShip:
                     //Console.WriteLine("TOWER HIT");                    
-                    break;
+                    //break;
                 case BoxFilters.FilterPlayerRay:
-                    //ToDestroy = true;
+                    SoundEffectInstance sfx = _assMan.SfxRayHitObstacle.CreateInstance();
+                    sfx.Volume = GameSettings.GameSettings.SfxVolume;
+                    sfx.Play();
                     break;
             }
         }
@@ -179,11 +185,14 @@ namespace FZtarOGL.Entity
         public override void Draw3D(float dt)
         {
             _screen.DrawModelWithColor(_model, ModelTrans, _modelColor);
-            
-            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh01, ModelTrans, currenttowerSignalColor);
-            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh02, ModelTrans, currenttowerSignalColor);
-            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh03, ModelTrans, currenttowerSignalColor);
-            _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh04, ModelTrans, currenttowerSignalColor);
+
+            if (_useSignals)
+            {
+                _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh01, ModelTrans, currenttowerSignalColor);
+                _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh02, ModelTrans, currenttowerSignalColor);
+                _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh03, ModelTrans, currenttowerSignalColor);
+                _screen.DrawModelMeshUnlitWithColor(_towerSignalMesh04, ModelTrans, currenttowerSignalColor);
+            }
         }
 
         public override void DrawBoundingBox()

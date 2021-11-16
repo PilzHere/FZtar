@@ -4,6 +4,7 @@ using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FZtarOGL.Entity
@@ -120,14 +121,14 @@ namespace FZtarOGL.Entity
 
         public override void OnCollision(int filter, float dt)
         {
-            /*switch (filter)
+            switch (filter)
             {
-                case BoxFilters.FilterPlayerShip:
-                    Console.WriteLine("HAITCH HIT");                    
+                case BoxFilters.FilterPlayerRay:
+                    SoundEffectInstance sfx = _assMan.SfxRayHitObstacle.CreateInstance();
+                    sfx.Volume = GameSettings.GameSettings.SfxVolume;
+                    sfx.Play();                    
                     break;
-            }*/
-            
-            //Console.WriteLine("i am haitch");
+            }
         }
 
         public override void Draw2D(float dt)

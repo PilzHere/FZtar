@@ -126,6 +126,11 @@ namespace FZtarOGL.Utilities
         public static Vector3 PlayerRayColor3 = new Vector3(PlayerRayColor3R / Max, PlayerRayColor3G / Max, PlayerRayColor3B / Max);
         public static Vector3 PlayerRayColor4 = new Vector3(PlayerRayColor4R / Max, PlayerRayColor4G / Max, PlayerRayColor4B / Max);
         
+        public static Vector3 EnemyRayColor1 = White;
+        public static Vector3 EnemyRayColor2 = new Vector3(255 / Max, 126 / Max, 126 / Max);
+        public static Vector3 EnemyRayColor3 = new Vector3(255 / Max, 0 / Max, 0 / Max);
+        public static Vector3 EnemyRayColor4 = new Vector3(255 / Max, 126 / Max, 126 / Max);
+        
         public static Vector3 PlayerThrusterColor1 = White;
         public static Vector3 PlayerThrusterColor2 = new Vector3(PlayerThrusterColor2R / Max, PlayerThrusterColor2G / Max, PlayerThrusterColor2B / Max);
         public static Vector3 PlayerThrusterColor3 = new Vector3(PlayerThrusterColor3R / Max, PlayerThrusterColor3G / Max, PlayerThrusterColor3B / Max);

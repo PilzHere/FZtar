@@ -3,6 +3,7 @@ using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FZtarOGL.Entity
@@ -151,7 +152,14 @@ namespace FZtarOGL.Entity
         {
             if (filter == BoxFilters.FilterPlayerShip)
             {
-                if (!powerGiven) powerGiven = true;
+                if (!powerGiven)
+                {
+                    SoundEffectInstance sfx = _assMan.SfxPowerUp.CreateInstance();
+                    sfx.Volume = GameSettings.GameSettings.SfxVolume;
+                    sfx.Play();
+
+                    powerGiven = true;
+                }
             }
         }
 

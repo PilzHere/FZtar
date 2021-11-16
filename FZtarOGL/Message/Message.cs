@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended.BitmapFonts;
 
@@ -29,12 +30,16 @@ namespace FZtarOGL.Message
 
         private float avatarScaleX = 1/64f;
         private float avatarScaleY = 1/16f;
+
+        private bool sfxPlayed;
+        private SoundEffectInstance _sfx;
         
-        public Message(Texture2D avatarFrame, Texture2D avatarFrameBg, Texture2D avatar, BitmapFont font, String message, float displayTime)
+        public Message(Texture2D avatarFrame, Texture2D avatarFrameBg, Texture2D avatar, SoundEffect sfx, BitmapFont font, String message, float displayTime)
         {
             _avatar = avatar;
             _font = font;
             _message = message;
+            _sfx = sfx.CreateInstance();
             _displayTime = displayTime;
 
             _avatarFrame = avatarFrame;
@@ -50,6 +55,14 @@ namespace FZtarOGL.Message
             
             if (scaleUpX)
             {
+                if (!sfxPlayed)
+                {
+                    _sfx.Volume = GameSettings.GameSettings.SfxVolume;
+                    _sfx.Play();
+
+                    sfxPlayed = true;
+                }
+                
                 avatarScaleX += dt * speedScaleX;
                 if (avatarScaleX > 1)
                 {

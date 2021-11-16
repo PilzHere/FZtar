@@ -5,6 +5,7 @@ using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FZtarOGL.Entity
@@ -12,8 +13,6 @@ namespace FZtarOGL.Entity
     public class PlayerRay : Entity
     {
         private Screen.Screen _screen;
-
-        private PlayerShip _playerShip;
 
         private Matrix modelTrans;
         private Vector3 modelScale;
@@ -24,8 +23,8 @@ namespace FZtarOGL.Entity
         
         private List<BoundingBoxFiltered> boxfes;
         public BoundingBoxFiltered boxf; // test!
-        private const float boxfMinX = 0.5f, boxfMinY = 0.125f, boxfMinZ = 1f;
-        private const float boxfMaxX = 0.5f, boxfMaxY = 0.125f, boxfMaxZ = 1f;
+        private const float boxfMinX = 1f, boxfMinY = 1f, boxfMinZ = 1f;
+        private const float boxfMaxX = 1f, boxfMaxY = 1f, boxfMaxZ = 1f;
         private Vector3 min;
         private Vector3 max;
         
@@ -36,13 +35,12 @@ namespace FZtarOGL.Entity
         private int rayColorOrdered;
         private float timerRayColor;
 
-        public PlayerRay(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 rotation, PlayerShip ship)
+        public PlayerRay(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 rotation)
         {
             _screen = screen;
             modelPos = position;
             //modelRot = rotation;
             modelRot = rotation;
-            _playerShip = ship;
 
             _model = assMan.RayModel;
 
@@ -70,17 +68,21 @@ namespace FZtarOGL.Entity
             rayColors[2] = ModelColors.PlayerRayColor3;
             rayColors[3] = ModelColors.PlayerRayColor4;
             currentRayColor = rayColors[0];
+            
+            SoundEffectInstance sfx = assMan.SfxRayShot.CreateInstance();
+            sfx.Volume = GameSettings.GameSettings.SfxVolume;
+            sfx.Play();
         }
 
         public override void Tick(float dt)
         {
-            if (modelPos.Z < _playerShip.ModelPos.Z - 200)
-                _ToDestroy = true;
+            if (modelPos.Z < -210 || modelPos.Z > 10)
+                Destroy();
 
             if (!_screen.CurrentLevel.IsLocatedInSpace)
             {
                 if (modelPos.Y < 0)
-                    _ToDestroy = true;                
+                    Destroy();                
             }
 
             float speed = 100;
@@ -137,6 +139,9 @@ namespace FZtarOGL.Entity
             switch (filter)
             {
                 case BoxFilters.FilterObstacle:
+                    ToDestroy = true;
+                    break;
+                case BoxFilters.FilterEnemyShip:
                     ToDestroy = true;
                     break;
             }

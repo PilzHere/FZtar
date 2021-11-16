@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using FZtarOGL.Asset;
+using FZtarOGL.GUI.Debug;
+using FZtarOGL.Level;
 using FZtarOGL.Profiler;
 using FZtarOGL.Screen;
 using Microsoft.Xna.Framework;
@@ -17,6 +19,14 @@ namespace FZtarOGL
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         
+        private GuiDebugManager _guiManager;
+
+        public GuiDebugManager GuiManager
+        {
+            get => _guiManager;
+            set => _guiManager = value;
+        }
+
         private readonly string GameTitle;
         private uint _ticks, _frames, _lastUps, _lastFps; // Actual ups, fps.
 
@@ -41,12 +51,20 @@ namespace FZtarOGL
 
         public ScreenManager ScreenManager => _screenManager;
 
+        private ContinueLevel _continueLevel;
+
+        public ContinueLevel ContinueLevel
+        {
+            get => _continueLevel;
+            set => _continueLevel = value;
+        }
+
         public Game1()
         {
             GameTitle = "Frag Ztar";
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         protected override void Initialize()
@@ -65,7 +83,8 @@ namespace FZtarOGL
             _windowedLastWidth = Window.ClientBounds.Width;
             _windowedLastHeight = Window.ClientBounds.Height;
 
-            GameSettings.GameSettings.MusicVolume = 0; // change!
+            GameSettings.GameSettings.MusicVolume = 0.2f; // TODO: change!
+            GameSettings.GameSettings.SfxVolume = 0.33f; // TODO: change!
 
             base.Initialize();
             
@@ -168,6 +187,8 @@ namespace FZtarOGL
             _smoothedFps = (int)Math.Round(_fps);
         }
 
+        private bool keyShowProfilerIsUp;
+        
         protected override void Update(GameTime gameTime)
         {
             UpdateWindowResize(gameTime);
@@ -180,20 +201,24 @@ namespace FZtarOGL
             
             if (gs.DebugUpdateWindowTitle) UpdateWindowTitle();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                Exit();
-            }
-
             if (KeyboardExtended.GetState().WasKeyJustDown(Keys.F))
             {
                 UpdateWindowFullscreen();
             }
 
+            if (KeyboardExtended.GetState().IsKeyUp(Keys.F1))
+            {
+                keyShowProfilerIsUp = true;
+            }
+            
             if (KeyboardExtended.GetState().IsKeyDown(Keys.F1))
             {
-                gs.DebugRenderDebugGui = !gs.DebugRenderDebugGui;
+                if (keyShowProfilerIsUp)
+                {
+                    gs.DebugRenderDebugGui = !gs.DebugRenderDebugGui;
+
+                    keyShowProfilerIsUp = false;
+                }
             }
             
             _screenManager.GameScreens.First().Input(gameTime, _deltaTime);
@@ -233,6 +258,8 @@ namespace FZtarOGL
             // Update profiler stats
             if (gs.DebugRenderDebugGui)
             {
+                IsMouseVisible = true;
+                
                 ProfilerStats.DrawCalls = _graphics.GraphicsDevice.Metrics.DrawCount;
                 ProfilerStats.ClearCalls = _graphics.GraphicsDevice.Metrics.ClearCount;
                 ProfilerStats.TargetSwitches = _graphics.GraphicsDevice.Metrics.TargetCount;
@@ -244,6 +271,10 @@ namespace FZtarOGL
                 ProfilerStats.ModelsDrawn = _screenManager.GameScreens.First().ModelsDrawn;
                 
                 _screenManager.GameScreens.First().DrawDebugGUI(gameTime);
+            }
+            else
+            {
+                IsMouseVisible = false;
             }
 
             base.Draw(gameTime);

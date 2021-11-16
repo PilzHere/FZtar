@@ -163,6 +163,63 @@
 /processorParam:TextureFormat=NoChange
 /build:models/playerShip.fbx
 
+#begin models/enemyShip01.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/enemyShip01.fbx
+
+#begin models/explosion01.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/explosion01.fbx
+
+#begin models/turret01.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/turret01.fbx
+
 #begin models/ray.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -334,6 +391,44 @@
 /processorParam:TextureFormat=NoChange
 /build:models/heich03.fbx
 
+#begin models/spacejunk01.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/spacejunk01.fbx
+
+#begin models/spacejunk02.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=False
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=NoChange
+/build:models/spacejunk02.fbx
+
 #begin textures/hud.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -448,6 +543,57 @@
 /processorParam:TextureFormat=Color
 /build:fonts/font02_32_0.png
 
+#begin fonts/font03_08.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font03_08.fnt
+
+#begin fonts/font03_08_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font03_08_0.png
+
+#begin fonts/font03_16.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font03_16.fnt
+
+#begin fonts/font03_16_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font03_16_0.png
+
+#begin fonts/font03_32.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/build:fonts/font03_32.fnt
+
+#begin fonts/font03_32_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:fonts/font03_32_0.png
+
 #begin textures/avatarFrame.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -532,32 +678,122 @@
 /processorParam:TextureFormat=Color
 /build:models/fz.png
 
-#begin sound/music/title.mp3
+#begin sound/music/titleExt.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:sound/music/title.mp3
+/build:sound/music/titleExt.mp3
 
 #begin sound/music/level1.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sound/music/level1.mp3
 
 #begin sound/music/level2.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sound/music/level2.mp3
 
 #begin sound/music/level3.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sound/music/level3.mp3
 
 #begin sound/music/ending.mp3
 /importer:Mp3Importer
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:sound/music/ending.mp3
+
+#begin sound/sfx/menu/sfxPopup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/menu/sfxPopup.wav
+
+#begin sound/sfx/menu/sfxPopdown.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/menu/sfxPopdown.wav
+
+#begin sound/sfx/menu/sfxPointer.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/menu/sfxPointer.wav
+
+#begin sound/sfx/menu/sfxConfirm.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/menu/sfxConfirm.wav
+
+#begin sound/sfx/menu/sfxCancel.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/menu/sfxCancel.wav
+
+#begin sound/sfx/action/sfxRayShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxRayShot.wav
+
+#begin sound/sfx/action/sfxRayHitObstacle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxRayHitObstacle.wav
+
+#begin sound/sfx/action/sfxShield.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxShield.wav
+
+#begin sound/sfx/action/sfxPlayerHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxPlayerHit.wav
+
+#begin sound/sfx/action/sfxPlayerDeath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxPlayerDeath.wav
+
+#begin sound/sfx/action/sfxEnemyHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxEnemyHit.wav
+
+#begin sound/sfx/action/sfxPowerUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxPowerUp.wav
+
+#begin sound/sfx/action/sfxHealthUp.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxHealthUp.wav
+
+#begin sound/sfx/action/sfxMessage.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxMessage.wav
+
+#begin sound/sfx/action/sfxLowHealth.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:sound/sfx/action/sfxLowHealth.wav

@@ -31,10 +31,10 @@ namespace FZtarOGL.Level
             BackgroundPosInt = new Vector2((int)BackgroundPos.X, (int)BackgroundPos.Y);
             BackgroundOrigin = new Vector2(256, 256);
 
-            levelSong = assMan.songLevel1;
-            MediaPlayer.Play(levelSong);
-            MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = GameSettings.GameSettings.MusicVolume;
+            BackgroundMusic = assMan.SongLevel1.CreateInstance();
+            BackgroundMusic.IsLooped = true;
+            BackgroundMusic.Volume = GameSettings.GameSettings.MusicVolume;
+            BackgroundMusic.Play();
 
             basicEffectPrimitives = new BasicEffect(screen.GraphicsDevice);
 
@@ -59,6 +59,8 @@ namespace FZtarOGL.Level
                     dotPosX += dotPosOffsetX;
                 }
             }
+
+            screen.SetContinueLevel(ContinueLevel.Level01);
         }
 
         public override void Tick(GameTime gt, float dt)
@@ -85,81 +87,180 @@ namespace FZtarOGL.Level
                     case 0:
 
                         // obstacles
-                        //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -200), ModelColors.DarkGray));
-                        
-                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -100), ModelColors.Orange));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -100)));
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 1.5f, -100)));
-                        
-                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(0, 0, -150), ModelColors.Lime));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1.5f, -150)));
-                        
-                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Lime));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
-                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -200), ModelColors.DarkGray,
+                            true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -200), ModelColors.DarkGray,
+                            true));
+
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-9, 1, -151)));
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(9, 1, -151)));
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 1, -200)));
+
+                        //Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -100), ModelColors.Orange));
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -100)));
+                        //Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 1.5f, -100)));
+
+                        //Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(0, 0, -150), ModelColors.Lime));
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1.5f, -150)));
+
+                        //Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Lime));
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
+
                         //Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(-10, 0, -100), ModelColors.Orange));
 
+                        // messages
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage ,AssMan.Font02_08,
+                            "Our warehouse has\nbeen breached!\n25 thousand GPU's\nin thieves's hand...\nNo one but me\ncan save it!",
+                            5));
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "Damn miners!\nThey will do\nanything for\nthose bits of\ncoins... I mean...\nBitcoin.",
+                            5));
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet02Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "It's a good thing\nI still have my\nspaceship close\nat hand for\nsituations like\nthis!",
+                            5));
                         break;
                     case 1:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-4, 0, -200), ModelColors.DarkGray,
+                            true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(4, 0, -200), ModelColors.DarkGray,
+                            true));
+
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-8, 0, -250), ModelColors.DarkGray,
+                            true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.DarkGray,
+                            true));
+
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -300), ModelColors.DarkGray,
+                            true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(8, 0, -300), ModelColors.DarkGray,
+                            true));
+
+                        //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
+                        //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
 
                         // pickus
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -200)));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -240)));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -280)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 3, -200)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-4, 5, -250)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(4, 7, -300)));
 
                         // messages
-                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                        /*Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet01Tex, AssMan.Font02_08,
-                            "Hej alla!\nDr Inet har...\nHur gar det for\ner?", 3));
+                            "Our warehouse has\nbeen breached!\n25 thousand GPU's\nin thieves's hand...\nNo one but me\ncan save it!", 5));
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet02Tex, AssMan.Font02_08,
-                            "Mindre an 10\ndagar kvar bara.\nMen kann ingen\nstress...\nMan ska ha roligt\npa ett jam!",
+                            "It's a good thing\nI still have my\nspaceship close\nat hand for\nsituations like\nthis!",
                             5));
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet03Tex, AssMan.Font02_08,
-                            "Lycka till i jamet!\nGO JAVA BOYS!", 3));
+                            "Lycka till i jamet!", 3));*/
 
                         break;
                     case 2:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Red1));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(0, 0, -300), ModelColors.Gold));
+
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(9, 0, -200)));
+
+                        /*Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.DarkGray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.DarkGray));*/
 
                         // pickups
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-3, 3, -200)));
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 3, -240)));
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(3, 3, -280)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 1, -200)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 7.5f, -300)));
+                        /*Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(3, 3, -280)));*/
 
                         break;
                     case 3:
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(5, 0, -230)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-5, 0, -260)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(1.5f, 0, -245)));
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
+                        /*Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.DarkGray));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.DarkGray));*/
 
                         break;
                     case 4:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(3, 0, -250), ModelColors.DarkGray));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-3, 0, -250), ModelColors.DarkGray));
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Purple));
+
+                        // pickups
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1, -200)));
+
+                        break;
+                    case 5:
+
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "Incoming enemy\nminer!", 3));
+
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 10, -200), true));
+
+                        break;
+                    case 6:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "There's more of\nthem!", 3));
+
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(10, 15, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-7, 10, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 3, -300), true));
+
+                        break;
+                    case 7:
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 5, -198)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 5, -198)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 5, -198)));
+                        
+                        int max = 50;
+                        for (var i = 0; i < max; i++)
+                        {
+                            if (i == 0 || i == max - 1)
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200 - 3 * i),
+                                    ModelColors.Blue1, true));
+                            else
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200 - 3 * i),
+                                    ModelColors.Blue1, false));
+                        }
+
+                        for (var i = 0; i < max; i++)
+                        {
+                            if (i == 0 || i == max - 1)
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200 - 3 * i),
+                                    ModelColors.DarkGray, true));
+                            else
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200 - 3 * i),
+                                    ModelColors.DarkGray, false));
+                        }
+
+                        for (var i = 0; i < max; i++)
+                        {
+                            if (i == 0 || i == max - 1)
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200 - 3 * i),
+                                    ModelColors.Red1, true));
+                            else
+                                Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200 - 3 * i),
+                                    ModelColors.Red1, false));
+                        }
+                        
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(5, 6, -200 - 3 * 10), ModelColors.Red1));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(5, -4, -200 - 3 * 10), ModelColors.Gold));
 
                         break;
                 }
