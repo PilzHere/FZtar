@@ -1,16 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Security.Cryptography;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
-using FZtarOGL.Camera;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Input;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace FZtarOGL.Entity
@@ -20,49 +14,47 @@ namespace FZtarOGL.Entity
         private Matrix _modelTrans;
         private Vector3 _modelScale, _modelRot, _modelPos;
 
-        public Vector3 ModelPos => _modelPos;
-
         private Model _model;
         private ModelMesh _thrusterMesh;
 
-        private Vector3[] thrusterColors;
-        private Vector3 currentThrusterColor;
-        private int thrusterColorOrdered;
-        private float timerThrusterColor;
+        private Vector3[] _thrusterColors;
+        private Vector3 _currentThrusterColor;
+        private int _thrusterColorOrdered;
+        private float _timerThrusterColor;
 
         private int _hp, _maxHp = 1;
-        public int Hp => _hp;
+        //public int Hp => _hp;
 
-        private List<BoundingBoxFiltered> boxfes;
+        private List<BoundingBoxFiltered> _boxfes;
 
         //private const float playerShipMaxPosX = 9;
         private float speedX = 7; // 7
 
         //private const float playerShipRotZSpeed = 2;
-        private float rotXSpeed = 1;
-        private float rotYSpeed = 1;
+        private float _rotXSpeed = 1;
+        private float _rotYSpeed = 1;
 
-        private const float speedY = 5;
+        //private const float SpeedY = 5;
         //private float speedZ = 0; // 33
 
-        private float rotXMaxAngle = 0.25f;
-        private float rotZMaxAngle = 0.25f;
-        private float rotYMaxAngle = 0.35f;
+        private float _rotXMaxAngle = 0.25f;
+        private float _rotZMaxAngle = 0.25f;
+        private float _rotYMaxAngle = 0.35f;
 
-        public float SpeedX => speedX;
-        public float RotYSpeed => rotYSpeed;
-        public float RotZMaxAngle => rotZMaxAngle;
-        public float RotYMaxAngle => rotYMaxAngle;
+        //public float SpeedX => speedX;
+        //public float RotYSpeed => _rotYSpeed;
+        //public float RotZMaxAngle => _rotZMaxAngle;
+        //public float RotYMaxAngle => _rotYMaxAngle;
 
         private Screen.Screen _screen;
 
-        private BoundingBoxFiltered boxf;
-        private const float boxfMinX = -2, boxfMinY = -1.5f, boxfMinZ = -2;
-        private const float boxfMaxX = 2, boxfMaxY = 1.5f, boxfMaxZ = 2;
-        private Vector3 min;
-        private Vector3 max;
+        private BoundingBoxFiltered _boxf;
+        private const float BoxfMinX = -2, BoxfMinY = -1.5f, BoxfMinZ = -2;
+        private const float BoxfMaxX = 2, BoxfMaxY = 1.5f, BoxfMaxZ = 2;
+        private Vector3 _min;
+        private Vector3 _max;
 
-        private bool gotHit;
+        private bool _gotHit;
         //private float gotHitTimer;
         //private bool toRenderShip = true;
 
@@ -70,11 +62,11 @@ namespace FZtarOGL.Entity
 
         private PlayerShip _targetShip;
         private Vector3 _aimPos;
-        private float shootTimer;
-        private bool canShoot;
+        private float _shootTimer;
+        private bool _canShoot;
 
-        private bool _moveTowardsPlayer = true;
-        private float spawnY;
+        private bool _moveTowardsPlayer;
+        private float _spawnY;
 
         public EnemyShip(Screen.Screen screen, AssetManager assMan, Vector3 position,
             bool moveTowardsPlayer)
@@ -98,30 +90,30 @@ namespace FZtarOGL.Entity
                           Matrix.CreateRotationZ(_modelRot.Z) *
                           Matrix.CreateTranslation(_modelPos);
 
-            spawnY = _modelTrans.Translation.Y;
+            _spawnY = _modelTrans.Translation.Y;
 
-            boxfes = new List<BoundingBoxFiltered>();
-            min = new Vector3(_modelTrans.Translation.X + boxfMinX, _modelTrans.Translation.Y + boxfMinY,
-                _modelTrans.Translation.Z + boxfMinZ);
-            max = new Vector3(_modelTrans.Translation.X + boxfMaxX, _modelTrans.Translation.Y + boxfMaxY,
-                _modelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterEnemyShip, BoxFilters.MaskEnemyShip);
-            boxfes.Add(boxf);
+            _boxfes = new List<BoundingBoxFiltered>();
+            _min = new Vector3(_modelTrans.Translation.X + BoxfMinX, _modelTrans.Translation.Y + BoxfMinY,
+                _modelTrans.Translation.Z + BoxfMinZ);
+            _max = new Vector3(_modelTrans.Translation.X + BoxfMaxX, _modelTrans.Translation.Y + BoxfMaxY,
+                _modelTrans.Translation.Z + BoxfMaxZ);
+            _boxf = new BoundingBoxFiltered(this, _min, _max, BoxFilters.FilterEnemyShip, BoxFilters.MaskEnemyShip);
+            _boxfes.Add(_boxf);
 
             // thruster colors
-            thrusterColors = new Vector3[4];
-            thrusterColors[0] = ModelColors.PlayerThrusterColor1;
-            thrusterColors[1] = ModelColors.PlayerThrusterColor2;
-            thrusterColors[2] = ModelColors.PlayerThrusterColor3;
-            thrusterColors[3] = ModelColors.PlayerThrusterColor4;
-            currentThrusterColor = thrusterColors[0];
+            _thrusterColors = new Vector3[4];
+            _thrusterColors[0] = ModelColors.PlayerThrusterColor1;
+            _thrusterColors[1] = ModelColors.PlayerThrusterColor2;
+            _thrusterColors[2] = ModelColors.PlayerThrusterColor3;
+            _thrusterColors[3] = ModelColors.PlayerThrusterColor4;
+            _currentThrusterColor = _thrusterColors[0];
 
             _hp = _maxHp;
         }
 
         private void AiTick(float dt)
         {
-            var minY = spawnY - 10;
+            var minY = _spawnY - 10;
             
             var speedZ = _screen.CurrentLevel.VirtualSpeedZ * 1.5f;
 
@@ -163,22 +155,22 @@ namespace FZtarOGL.Entity
                 
                 if (distanceToPlayerShip >= 0 && distanceToPlayerShip <= maxDistToPlayerShip)
                 {
-                    if (canShoot)
+                    if (_canShoot)
                     {
                         if (direction.Z > 0) // Don't shoot behind.
                         {
                             _screen._EntitiesToAdd.Add(new EnemyRay(_screen, _assMan, _modelPos, direction));
-                            canShoot = false;
+                            _canShoot = false;
                         }
                     }
                     else
                     {
                         var shootCoolDown = 0.5f;
-                        shootTimer += dt;
-                        if (shootTimer >= shootCoolDown)
+                        _shootTimer += dt;
+                        if (_shootTimer >= shootCoolDown)
                         {
-                            shootTimer = 0;
-                            canShoot = true;
+                            _shootTimer = 0;
+                            _canShoot = true;
                         }
                     }
                 }
@@ -194,10 +186,6 @@ namespace FZtarOGL.Entity
                 Destroy();
             }
 
-            if (gotHit)
-            {
-            }
-
             // trans
             /*_modelTrans = Matrix.CreateScale(_modelScale) *
                           Matrix.CreateRotationX(_modelRot.X) *
@@ -210,36 +198,36 @@ namespace FZtarOGL.Entity
                           
 
             // bb
-            min = new Vector3(_modelTrans.Translation.X + boxfMinX, _modelTrans.Translation.Y + boxfMinY,
-                _modelTrans.Translation.Z + boxfMinZ);
-            max = new Vector3(_modelTrans.Translation.X + boxfMaxX, _modelTrans.Translation.Y + boxfMaxY,
-                _modelTrans.Translation.Z + boxfMaxZ);
-            boxf.Box = new BoundingBox(min, max);
+            _min = new Vector3(_modelTrans.Translation.X + BoxfMinX, _modelTrans.Translation.Y + BoxfMinY,
+                _modelTrans.Translation.Z + BoxfMinZ);
+            _max = new Vector3(_modelTrans.Translation.X + BoxfMaxX, _modelTrans.Translation.Y + BoxfMaxY,
+                _modelTrans.Translation.Z + BoxfMaxZ);
+            _boxf.Box = new BoundingBox(_min, _max);
 
-            boxfes.Clear();
-            boxfes.Add(boxf);
+            _boxfes.Clear();
+            _boxfes.Add(_boxf);
 
-            foreach (var boxf in boxfes)
+            foreach (var boxf in _boxfes)
             {
                 _screen.BoundingBoxesFiltered.Add(boxf);
             }
 
             // thrustercolor
-            timerThrusterColor += dt;
+            _timerThrusterColor += dt;
             const float timeRayColor = 0.025f;
-            bool changeColor = timerThrusterColor >= timeRayColor;
+            bool changeColor = _timerThrusterColor >= timeRayColor;
             if (changeColor)
             {
                 // ordered
-                thrusterColorOrdered++;
-                if (thrusterColorOrdered > thrusterColors.Length - 1) thrusterColorOrdered = 0;
-                currentThrusterColor = thrusterColors[thrusterColorOrdered];
+                _thrusterColorOrdered++;
+                if (_thrusterColorOrdered > _thrusterColors.Length - 1) _thrusterColorOrdered = 0;
+                _currentThrusterColor = _thrusterColors[_thrusterColorOrdered];
 
                 // random
                 //int rayColor = rnd.Next(0, rayColors.Length);
                 //currentRayColor = rayColors[rayColor];
 
-                timerThrusterColor = 0;
+                _timerThrusterColor = 0;
             }
         }
 
@@ -281,12 +269,12 @@ namespace FZtarOGL.Entity
         public override void Draw3D(float dt)
         {
             _screen.DrawModel(_model, _modelTrans);
-            _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, _modelTrans, currentThrusterColor);
+            _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, _modelTrans, _currentThrusterColor);
         }
 
         public override void DrawBoundingBox()
         {
-            _screen.DrawBoundingBoxFiltered(boxfes, Matrix.Identity);
+            _screen.DrawBoundingBoxFiltered(_boxfes, Matrix.Identity);
         }
 
         public override void Destroy()

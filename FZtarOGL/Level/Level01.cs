@@ -1,10 +1,13 @@
+using System;
 using FZtarOGL.Asset;
 using FZtarOGL.Camera;
 using FZtarOGL.Entity;
+using FZtarOGL.Screen;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using MonoGame.Extended.BitmapFonts;
 
 namespace FZtarOGL.Level
 {
@@ -88,25 +91,37 @@ namespace FZtarOGL.Level
 
                         // obstacles
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -200), ModelColors.DarkGray,
-                            true));
+                            true, false));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -200), ModelColors.DarkGray,
-                            true));
+                            true, false));
 
-                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-9, 1, -151)));
-                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(9, 1, -151)));
-                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 1, -200)));
-
-                        //Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -100), ModelColors.Orange));
-                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -100)));
-                        //Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 1.5f, -100)));
-
-                        //Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(0, 0, -150), ModelColors.Lime));
-                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1.5f, -150)));
-
-                        //Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Lime));
-                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
-
-                        //Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(-10, 0, -100), ModelColors.Orange));
+                        // trees
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(10,0,-100)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-10,0,-100)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(9,0,-110)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-9,0,-110)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8,0,-120)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-8,0,-120)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(7,0,-130)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-7,0,-130)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(6,0,-140)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-6,0,-140)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(5,0,-150)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-5,0,-150)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(4,0,-160)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-4,0,-160)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3,0,-170)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-3,0,-170)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8,0,-250)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-2,0,-233)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3,0,-215)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-6,0,-240)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(0,0,-270)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3,0,-350)));
 
                         // messages
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
@@ -126,19 +141,19 @@ namespace FZtarOGL.Level
 
                         // obstacles
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-4, 0, -200), ModelColors.DarkGray,
-                            true));
+                            true, false));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(4, 0, -200), ModelColors.DarkGray,
-                            true));
+                            true, false));
 
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-8, 0, -250), ModelColors.DarkGray,
-                            true));
+                            true, false));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.DarkGray,
-                            true));
+                            true, false));
 
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -300), ModelColors.DarkGray,
-                            true));
+                            true, false));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(8, 0, -300), ModelColors.DarkGray,
-                            true));
+                            true, false));
 
                         //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
                         //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
@@ -147,6 +162,10 @@ namespace FZtarOGL.Level
                         Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 3, -200)));
                         Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-4, 5, -250)));
                         Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(4, 7, -300)));
+                        
+                        //tree
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(7,0,-433)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-4,0,-410)));
 
                         // messages
                         /*Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
@@ -181,10 +200,13 @@ namespace FZtarOGL.Level
 
                         break;
                     case 3:
-                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(5, 0, -230)));
-                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-5, 0, -260)));
-                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(1.5f, 0, -245)));
-
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 6.25f, -220)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(11, 6.25f, -240)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-7, 6.25f, -260)));
+                        
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(14, 0, -230), ModelColors.DarkBlue));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(-12, 0, -260), ModelColors.Orange));
+                        
                         // obstacles
                         /*Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.DarkGray));
@@ -192,7 +214,18 @@ namespace FZtarOGL.Level
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.DarkGray));
                         Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.DarkGray));*/
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(6.5f,0,-200)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-4.5f,0,-220)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3.5f,0,-275)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-1.5f,0,-280)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8.5f,0,-283)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(10.5f,0,-290)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-10.5f,0,-295)));
 
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(13, 0, -375), ModelColors.LightBlue));
+                        
                         break;
                     case 4:
 
@@ -208,9 +241,19 @@ namespace FZtarOGL.Level
 
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
-                            "Incoming enemy\nminer!", 3));
+                            "Incoming enemy!\nA kamikaze miner!", 3));
 
                         Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 10, -200), true));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(2.5f,0,-200)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-1.5f,0,-230)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3.5f,0,-253)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(9.5f,0,-270)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-8.5f,0,-300)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-6.5f,0,-320)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-3.5f,0,-340)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8.5f,0,-370)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-5.3f,0,-400)));
 
                         break;
                     case 6:
@@ -220,7 +263,11 @@ namespace FZtarOGL.Level
 
                         Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(10, 15, -200), true));
                         Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-7, 10, -250), true));
-                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 3, -300), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 6, -300), true));
+                        
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(-14, 0, -200), ModelColors.Blue2));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(0, 0, -220), ModelColors.Gold));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(12, 0, -310), ModelColors.Gray));
 
                         break;
                     case 7:
@@ -233,35 +280,117 @@ namespace FZtarOGL.Level
                         {
                             if (i == 0 || i == max - 1)
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200 - 3 * i),
-                                    ModelColors.Blue1, true));
+                                    ModelColors.Blue1, true, false));
                             else
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200 - 3 * i),
-                                    ModelColors.Blue1, false));
+                                    ModelColors.Blue1, false, false));
                         }
 
                         for (var i = 0; i < max; i++)
                         {
                             if (i == 0 || i == max - 1)
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200 - 3 * i),
-                                    ModelColors.DarkGray, true));
+                                    ModelColors.DarkGray, true, false));
                             else
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200 - 3 * i),
-                                    ModelColors.DarkGray, false));
+                                    ModelColors.DarkGray, false, false));
                         }
 
                         for (var i = 0; i < max; i++)
                         {
                             if (i == 0 || i == max - 1)
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200 - 3 * i),
-                                    ModelColors.Red1, true));
+                                    ModelColors.Red1, true, false));
                             else
                                 Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200 - 3 * i),
-                                    ModelColors.Red1, false));
+                                    ModelColors.Red1, false, false));
                         }
                         
-                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(5, 6, -200 - 3 * 10), ModelColors.Red1));
-                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(5, -4, -200 - 3 * 10), ModelColors.Gold));
+                        // Left side
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(-5, 10, -200 - 3 * 10), ModelColors.Gold));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(-5, 0, -200 - 3 * 10), ModelColors.Green1));
+                        
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(-5, 1, -200 - 3 * 20), ModelColors.Lime));
+                        
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(-5, 10, -200 - 3 * 30), ModelColors.Red1));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(-5, 0, -200 - 3 * 30), ModelColors.Orange));
+                        
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(-5, 1, -200 - 3 * 40), ModelColors.Purple));
+                        
+                        // Right side
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(5, 10, -200 - 3 * 10), ModelColors.Red1));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(5, 0, -200 - 3 * 10), ModelColors.Gold));
+                        
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(5, 1, -200 - 3 * 20), ModelColors.Red2));
+                        
+                        Screen._Entities.Add(new HaitchLow(Screen, AssMan, new Vector3(5, 10, -200 - 3 * 30), ModelColors.Yellow));
+                        Screen._Entities.Add(new HaitchHigh(Screen, AssMan, new Vector3(5, 0, -200 - 3 * 30), ModelColors.Green2));
+                        
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(5, 1, -200 - 3 * 40), ModelColors.LightBlue));
+                        break;
+                    case 8:
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(6.5f,0,-200)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-4.5f,0,-220)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3.5f,0,-275)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-1.5f,0,-280)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8.5f,0,-283)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(10.5f,0,-290)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-10.5f,0,-295)));
+                        break;
+                    
+                    case 9:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "It's those turrets\nagain!", 3));
+                        
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 6.25f, -213)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-8, 6.25f, -203)));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(14, 0, -210), ModelColors.DarkBlue));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(-12, 0, -210), ModelColors.Gold));
+                        
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(4, 6.25f, -253)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 6.25f, -247)));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.Orange));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(-14, 0, -250), ModelColors.Purple));
+                        
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 6.25f, -305)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 6.25f, -295)));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(14, 0, -300), ModelColors.Red1));
+                        Screen._Entities.Add(new House(Screen, AssMan, new Vector3(-14, 0, -300), ModelColors.DarkGreen1));
+                        break;
+                    
+                    case 10:
+                        // obstacles
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Purple));
 
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(6.5f,0,-200)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-4.5f,0,-220)));
+                        
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(3.5f,0,-275)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-1.5f,0,-280)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(8.5f,0,-283)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(10.5f,0,-290)));
+                        Screen._Entities.Add(new Tree(Screen, AssMan, new Vector3(-10.5f,0,-295)));
+                        
+                        // pickups
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1, -200)));
+                        break;
+                    case 11:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet02Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "I'm tracking the\nthe direction of\nthe stolen goods.", 3));
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet03Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "It seems I have\nto increase\naltitude!\nOnwards to the\nskies!", 3));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -200), ModelColors.DarkGray,
+                            true, false));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -200), ModelColors.DarkGray,
+                            true, false));
+                        break;
+                    case 12:
+                        levelIsFinished = true;
                         break;
                 }
             }
@@ -310,6 +439,36 @@ namespace FZtarOGL.Level
             SpriteBatch.Draw(BackgroundTexture, BackgroundPosInt, null, Color.White, rotation, BackgroundOrigin,
                 Vector2.One,
                 SpriteEffects.None, 0);
+        }
+
+        private float _loadNextLevelTimer;
+        
+        public override void OnLevelFinished(float dt)
+        {
+            var nextLevelTime = 5;
+            _loadNextLevelTimer += dt;
+            if (_loadNextLevelTimer >= nextLevelTime) Screen.LoadLevel(2);
+        }
+
+        public override void DrawOnLevelFinished(SpriteBatch sb, BitmapFont font, float dt)
+        {
+            String textLevelFinished = "Up up... and away!";
+            int posXLf = (int)(SpriteBatch.GraphicsDevice.Viewport.X +
+                               SpriteBatch.GraphicsDevice.Viewport.Width / 2f -
+                               font.GetStringRectangle(textLevelFinished).Width / 2f);
+            int posYLf = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
+                               SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
+                               font.GetStringRectangle(textLevelFinished).Height / 2f);
+            SpriteBatch.DrawString(font, textLevelFinished, new Vector2(posXLf, posYLf - 16), Color.Red);
+            
+            String textLevelFinished2 = "It continues in the skies.";
+            int posXLf2 = (int)(SpriteBatch.GraphicsDevice.Viewport.X +
+                                SpriteBatch.GraphicsDevice.Viewport.Width / 2f -
+                                font.GetStringRectangle(textLevelFinished2).Width / 2f);
+            int posYLf2 = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
+                                SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
+                                font.GetStringRectangle(textLevelFinished2).Height / 2f);
+            SpriteBatch.DrawString(font, textLevelFinished2, new Vector2(posXLf2, posYLf2 + 16), Color.Red);
         }
     }
 }

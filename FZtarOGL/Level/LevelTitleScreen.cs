@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using MonoGame.Extended.BitmapFonts;
 
 namespace FZtarOGL.Level
 {
@@ -210,6 +211,16 @@ namespace FZtarOGL.Level
             SpriteBatch.Draw(BackgroundTexture, BackgroundPosInt, null, Color.White, rotation, BackgroundOrigin,
                 Vector2.One,
                 SpriteEffects.None, 0);
+        }
+
+        public override void OnLevelFinished(float dt)
+        {
+            
+        }
+
+        public override void DrawOnLevelFinished(SpriteBatch sb,BitmapFont font,  float dt)
+        {
+            
         }
     }
 }

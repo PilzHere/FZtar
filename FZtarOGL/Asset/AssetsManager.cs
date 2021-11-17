@@ -2,7 +2,6 @@ using System;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Media;
 using MonoGame.Extended.BitmapFonts;
 
 namespace FZtarOGL.Asset
@@ -63,6 +62,9 @@ namespace FZtarOGL.Asset
         private const string ModelSpaceJunk02Loc = "models/spacejunk02";
         private const string ModelExplosion01Loc = "models/explosion01";
         private const string ModelTurret01Loc = "models/turret01";
+        private const string ModelTree01Loc = "models/tree01";
+        private const string ModelTowerTallLoc = "models/towerTall";
+        private const string ModelHouse01Loc = "models/house01";
 
         // Models
         public Model FloorModel;
@@ -83,6 +85,9 @@ namespace FZtarOGL.Asset
         public Model SpaceJunk02Model;
         public Model Explosion01Model;
         public Model Turret01Model;
+        public Model Tree01Model;
+        public Model TowerTallModel;
+        public Model House01Model;
 
         // Font locations
         private const string Font01_08Loc = "fonts/font01_08";
@@ -255,6 +260,9 @@ namespace FZtarOGL.Asset
             SpaceJunk02Model = _contentManager.Load<Model>(ModelSpaceJunk02Loc);
             Explosion01Model = _contentManager.Load<Model>(ModelExplosion01Loc);
             Turret01Model = _contentManager.Load<Model>(ModelTurret01Loc);
+            Tree01Model = _contentManager.Load<Model>(ModelTree01Loc);
+            TowerTallModel = _contentManager.Load<Model>(ModelTowerTallLoc);
+            House01Model = _contentManager.Load<Model>(ModelHouse01Loc);
         }
 
         private void LoadAllFonts()
@@ -273,16 +281,5 @@ namespace FZtarOGL.Asset
             Font03_16 = _contentManager.Load<BitmapFont>(Font03_16Loc);
             Font03_32 = _contentManager.Load<BitmapFont>(Font03_32Loc);
         }
-
-        /*public virtual T LoadAsset<T>(string location)
-        {
-            var asset = _contentManager.Load<T>(location);
-            // BUG: Doesnt work.
-            if (asset == null)
-            {
-                Console.WriteLine("OMFG ASSET NULL");
-            }
-            return _contentManager.Load<T>(location);
-        }*/
     }
 }

@@ -9,6 +9,8 @@ using FZtarOGL.Level;
 using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace FZtarOGL.Screen
 {
@@ -73,6 +75,11 @@ namespace FZtarOGL.Screen
             BoundingBoxesDrawEffect.TextureEnabled = false;
             BoundingBoxesDrawEffect.VertexColorEnabled = true;
             BoundingBoxesDrawEffect.Alpha = 1;
+        }
+        
+        public virtual void LoadLevel(int levelId)
+        {
+            Entities.Clear();
         }
 
         protected void ResetCounters()

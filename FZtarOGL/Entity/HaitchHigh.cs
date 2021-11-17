@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
@@ -83,8 +82,7 @@ namespace FZtarOGL.Entity
         {
             if (_modelPos.Z > 10)
             {
-                //ModelPos.Z = -200;
-                _ToDestroy = true;
+                Destroy();
             }
 
             float speedZ = _screen.CurrentLevel.VirtualSpeedZ;
@@ -145,8 +143,5 @@ namespace FZtarOGL.Entity
             _screen.DrawBoundingBoxFiltered(boxfes, Matrix.Identity);
         }
 
-        public override void Destroy()
-        {
-        }
     }
 }

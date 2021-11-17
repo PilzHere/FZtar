@@ -61,8 +61,9 @@ namespace FZtarOGL.Screen
         private const String Controls01 = "W/S - MOVE UP/DOWN";
         private const String Controls02 = "A/D - MOVE LEFT/RIGHT";
         private const String Controls03 = "ARROW UP - SHOOT";
-        private const String Controls04 = "F - TOGGLE FULLSCREEN";
-        private const String Controls05 = "F1 - SHOW DEBUG DATA";
+        private const String Controls04 = "ARROW LEFT - SHIELD";
+        private const String Controls05 = "F - TOGGLE FULLSCREEN";
+        private const String Controls06 = "F1 - SHOW DEBUG DATA";
 
         private const String Options01 = "ENTER - TOGGLE";
         private const String Options02 = "INVERT UP/DOWN:";
@@ -189,9 +190,10 @@ namespace FZtarOGL.Screen
                                     
                                     var ps = new PlayScreen(Game, AssMan, SpriteBatch,
                                         _graphicsDevice);
+                                    
                                     // TEST LEVELS HERE!
-                                    ps.LoadLevel(new Level01(ps, AssMan, SpriteBatch), Game.Window, SpriteBatch,
-                                        AssMan);
+                                    ps.LoadLevel(1);
+                                    
                                     Game.ScreenManager.AddScreen(ps);
                                     break;
 
@@ -207,8 +209,7 @@ namespace FZtarOGL.Screen
                                             
                                             var ps01 = new PlayScreen(Game, AssMan, SpriteBatch,
                                                 _graphicsDevice);
-                                            ps01.LoadLevel(new Level01(ps01, AssMan, SpriteBatch), Game.Window,
-                                                SpriteBatch, AssMan);
+                                            ps01.LoadLevel(1);
                                             Game.ScreenManager.AddScreen(ps01);
                                             break;
 
@@ -221,8 +222,7 @@ namespace FZtarOGL.Screen
                                             
                                             var ps02 = new PlayScreen(Game, AssMan, SpriteBatch,
                                                 _graphicsDevice);
-                                            ps02.LoadLevel(new Level02(ps02, AssMan, SpriteBatch), Game.Window,
-                                                SpriteBatch, AssMan);
+                                            ps02.LoadLevel(2);
                                             Game.ScreenManager.AddScreen(ps02);
                                             break;
 
@@ -235,8 +235,7 @@ namespace FZtarOGL.Screen
                                             
                                             var ps03 = new PlayScreen(Game, AssMan, SpriteBatch,
                                                 _graphicsDevice);
-                                            ps03.LoadLevel(new Level03(ps03, AssMan, SpriteBatch), Game.Window,
-                                                SpriteBatch, AssMan);
+                                            ps03.LoadLevel(3);
                                             Game.ScreenManager.AddScreen(ps03);
                                             break;
                                         
@@ -578,6 +577,9 @@ namespace FZtarOGL.Screen
                     SpriteBatch.DrawString(_font02_16, Controls05,
                         new Vector2(GameConstants.SnesWidth / 2f - _font02_16.MeasureString(Controls05).Width / 2f,
                             GameConstants.SnesHeight / 2f + _font02_16.LineHeight * 4 - offsetY), Color.LightGray);
+                    SpriteBatch.DrawString(_font02_16, Controls06,
+                        new Vector2(GameConstants.SnesWidth / 2f - _font02_16.MeasureString(Controls06).Width / 2f,
+                            GameConstants.SnesHeight / 2f + _font02_16.LineHeight * 5 - offsetY), Color.LightGray);
                     break;
                 case Menu.Options:
                     // arrows

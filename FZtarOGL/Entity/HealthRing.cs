@@ -10,33 +10,32 @@ namespace FZtarOGL.Entity
 {
     public class HealthRing : Entity
     {
-        private Matrix ModelTransRing;
-        private Vector3 ModelScaleRing;
-        private Vector3 ModelRotRing;
-        private Vector3 ModelPosRing;
+        private Matrix _modelTransRing;
+        private Vector3 _modelScaleRing;
+        private Vector3 _modelRotRing;
+        private Vector3 _modelPosRing;
 
         private Model _modelRing;
 
-        private Matrix ModelTransBillboard;
-        private Vector3 ModelScaleBillboard;
-        private Vector3 ModelRotBillboard;
-        private Vector3 ModelPosBillboard;
+        private Matrix _modelTransBillboard;
+        private Vector3 _modelScaleBillboard;
+        private Vector3 _modelRotBillboard;
+        private Vector3 _modelPosBillboard;
 
         private Model _modelBillboard;
 
-        private Model ModelRing => _modelRing;
-        private List<BoundingBoxFiltered> boxfes; // public for testing! cange to private
+        private List<BoundingBoxFiltered> _boxfes; // public for testing! cange to private
 
         private Screen.Screen _screen;
 
         private AssetManager _assMan;
 
-        private BoundingBoxFiltered boxf;
+        private BoundingBoxFiltered _boxf;
 
-        private const float boxfMinX = 0.75f, boxfMinY = 0.75f, boxfMinZ = 0.125f;
-        private const float boxfMaxX = 0.75f, boxfMaxY = 0.75f, boxfMaxZ = 0.125f;
+        private const float BoxfMinX = 0.75f, BoxfMinY = 0.75f, BoxfMinZ = 0.125f;
+        private const float BoxfMaxX = 0.75f, BoxfMaxY = 0.75f, BoxfMaxZ = 0.125f;
 
-        private bool healthGiven;
+        private bool _healthGiven;
 
         public HealthRing(Screen.Screen screen, AssetManager assMan, Vector3 position)
         {
@@ -46,17 +45,17 @@ namespace FZtarOGL.Entity
             _modelRing = _assMan.Ring01Model;
             _modelBillboard = _assMan.BillboardHealth16Model;
 
-            ModelScaleRing = Vector3.One;
-            ModelRotRing = Vector3.Zero;
-            ModelPosRing = position;
-            ModelTransRing = Matrix.CreateScale(ModelScaleRing) *
-                             Matrix.CreateRotationX(ModelRotRing.X) *
-                             Matrix.CreateRotationY(ModelRotRing.Y) *
-                             Matrix.CreateRotationZ(ModelRotRing.Z) *
-                             Matrix.CreateTranslation(ModelPosRing);
+            _modelScaleRing = Vector3.One;
+            _modelRotRing = Vector3.Zero;
+            _modelPosRing = position;
+            _modelTransRing = Matrix.CreateScale(_modelScaleRing) *
+                             Matrix.CreateRotationX(_modelRotRing.X) *
+                             Matrix.CreateRotationY(_modelRotRing.Y) *
+                             Matrix.CreateRotationZ(_modelRotRing.Z) *
+                             Matrix.CreateTranslation(_modelPosRing);
 
             // Boundingboxes, one huge from all meshes min/max combined.
-            boxfes = new List<BoundingBoxFiltered>();
+            _boxfes = new List<BoundingBoxFiltered>();
 
             /*Matrix[] transforms = new Matrix[_model.Bones.Count];
             _model.CopyAbsoluteBoneTransformsTo(transforms);
@@ -69,96 +68,95 @@ namespace FZtarOGL.Entity
             }*/
 
 
-            Vector3 min = new Vector3(ModelTransRing.Translation.X - boxfMinX, ModelTransRing.Translation.Y - boxfMinY,
-                ModelTransRing.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTransRing.Translation.X + boxfMaxX, ModelTransRing.Translation.Y + boxfMaxY,
-                ModelTransRing.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterRingHealth, BoxFilters.MaskRingHealth);
+            Vector3 min = new Vector3(_modelTransRing.Translation.X - BoxfMinX, _modelTransRing.Translation.Y - BoxfMinY,
+                _modelTransRing.Translation.Z - BoxfMinZ);
+            Vector3 max = new Vector3(_modelTransRing.Translation.X + BoxfMaxX, _modelTransRing.Translation.Y + BoxfMaxY,
+                _modelTransRing.Translation.Z + BoxfMaxZ);
+            _boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterRingHealth, BoxFilters.MaskRingHealth);
 
-            boxfes.Add(boxf);
+            _boxfes.Add(_boxf);
 
             // billboard
-            ModelScaleBillboard = Vector3.One;
-            ModelRotBillboard = Vector3.Zero;
-            ModelPosBillboard = position;
-            ModelTransBillboard = Matrix.CreateScale(ModelScaleBillboard) *
-                                  Matrix.CreateRotationX(ModelRotBillboard.X) *
-                                  Matrix.CreateRotationY(ModelRotBillboard.Y) *
-                                  Matrix.CreateRotationZ(ModelRotBillboard.Z) *
-                                  Matrix.CreateTranslation(ModelPosBillboard);
+            _modelScaleBillboard = Vector3.One;
+            _modelRotBillboard = Vector3.Zero;
+            _modelPosBillboard = position;
+            _modelTransBillboard = Matrix.CreateScale(_modelScaleBillboard) *
+                                  Matrix.CreateRotationX(_modelRotBillboard.X) *
+                                  Matrix.CreateRotationY(_modelRotBillboard.Y) *
+                                  Matrix.CreateRotationZ(_modelRotBillboard.Z) *
+                                  Matrix.CreateTranslation(_modelPosBillboard);
         }
 
         public override void Tick(float dt)
         {
-            if (ModelPosRing.Z > 10 || ModelPosBillboard.Z > 10)
+            if (_modelPosRing.Z > 10 || _modelPosBillboard.Z > 10)
             {
-                //ModelPos.Z = -200;
-                _ToDestroy = true;
+                Destroy();
             }
 
             // move forward
             float speedZ = _screen.CurrentLevel.VirtualSpeedZ;
-            ModelPosRing.Z += speedZ * dt;
+            _modelPosRing.Z += speedZ * dt;
 
             // rotate
             float rotSpeedZ = 2.5f;
-            ModelRotRing.Z += rotSpeedZ * dt;
+            _modelRotRing.Z += rotSpeedZ * dt;
 
             // trans
-            ModelTransRing = Matrix.CreateScale(ModelScaleRing) *
-                             Matrix.CreateRotationX(ModelRotRing.X) *
-                             Matrix.CreateRotationY(ModelRotRing.Y) *
-                             Matrix.CreateRotationZ(ModelRotRing.Z) *
-                             Matrix.CreateTranslation(ModelPosRing);
+            _modelTransRing = Matrix.CreateScale(_modelScaleRing) *
+                             Matrix.CreateRotationX(_modelRotRing.X) *
+                             Matrix.CreateRotationY(_modelRotRing.Y) *
+                             Matrix.CreateRotationZ(_modelRotRing.Z) *
+                             Matrix.CreateTranslation(_modelPosRing);
 
             // BILLBOARD
             // move forward
-            ModelPosBillboard.Z += speedZ * dt;
+            _modelPosBillboard.Z += speedZ * dt;
 
             // trans
             // Look at cam.
-            ModelTransBillboard = Matrix.CreateBillboard(ModelPosBillboard, _screen.Cam3d.Position, _screen.Cam3d.Up,
+            _modelTransBillboard = Matrix.CreateBillboard(_modelPosBillboard, _screen.Cam3d.Position, _screen.Cam3d.Up,
                 _screen.Cam3d.Forward);
 
             // Rotate (stay steady even if camera rotates up/down) in Z axis.
-            ModelTransBillboard = Matrix.CreateRotationZ(-_screen.Cam3d.Up.X) *
-                                  Matrix.CreateTranslation(ModelPosBillboard);
+            _modelTransBillboard = Matrix.CreateRotationZ(-_screen.Cam3d.Up.X) *
+                                  Matrix.CreateTranslation(_modelPosBillboard);
 
             // box
-            Vector3 min = new Vector3(ModelTransRing.Translation.X - boxfMinX, ModelTransRing.Translation.Y - boxfMinY,
-                ModelTransRing.Translation.Z - boxfMinZ);
-            Vector3 max = new Vector3(ModelTransRing.Translation.X + boxfMaxX, ModelTransRing.Translation.Y + boxfMaxY,
-                ModelTransRing.Translation.Z + boxfMaxZ);
-            boxf.Box = new BoundingBox(min, max);
+            Vector3 min = new Vector3(_modelTransRing.Translation.X - BoxfMinX, _modelTransRing.Translation.Y - BoxfMinY,
+                _modelTransRing.Translation.Z - BoxfMinZ);
+            Vector3 max = new Vector3(_modelTransRing.Translation.X + BoxfMaxX, _modelTransRing.Translation.Y + BoxfMaxY,
+                _modelTransRing.Translation.Z + BoxfMaxZ);
+            _boxf.Box = new BoundingBox(min, max);
 
-            if (healthGiven)
+            if (_healthGiven)
             {
-                boxf.Filter = BoxFilters.FilterNothing;
+                _boxf.Filter = BoxFilters.FilterNothing;
             }
 
-            boxfes.Clear();
-            boxfes.Add(boxf);
+            _boxfes.Clear();
+            _boxfes.Add(_boxf);
 
-            foreach (var boxf in boxfes)
+            foreach (var boxf in _boxfes)
             {
                 _screen.BoundingBoxesFiltered.Add(boxf);
             }
 
             // Add transparent model(s) to render last.
-            if (!healthGiven) _screen.TransparentModels.Add(new TransparentModel(_modelBillboard, ModelTransBillboard));
+            if (!_healthGiven) _screen.TransparentModels.Add(new TransparentModel(_modelBillboard, _modelTransBillboard));
         }
 
         public override void OnCollision(int filter, float dt)
         {
             if (filter == BoxFilters.FilterPlayerShip)
             {
-                if (!healthGiven)
+                if (!_healthGiven)
                 {
                     SoundEffectInstance sfx = _assMan.SfxHealthUp.CreateInstance();
                     sfx.Volume = GameSettings.GameSettings.SfxVolume;
                     sfx.Play();
 
-                    healthGiven = true;
+                    _healthGiven = true;
                 }
             }
         }
@@ -169,16 +167,12 @@ namespace FZtarOGL.Entity
 
         public override void Draw3D(float dt)
         {
-            _screen.DrawModel(_modelRing, ModelTransRing);
+            _screen.DrawModel(_modelRing, _modelTransRing);
         }
 
         public override void DrawBoundingBox()
         {
-            _screen.DrawBoundingBoxFiltered(boxfes, Matrix.Identity);
-        }
-
-        public override void Destroy()
-        {
+            _screen.DrawBoundingBoxFiltered(_boxfes, Matrix.Identity);
         }
     }
 }

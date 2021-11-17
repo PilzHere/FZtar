@@ -83,8 +83,8 @@ namespace FZtarOGL
             _windowedLastWidth = Window.ClientBounds.Width;
             _windowedLastHeight = Window.ClientBounds.Height;
 
-            GameSettings.GameSettings.MusicVolume = 0.2f; // TODO: change!
-            GameSettings.GameSettings.SfxVolume = 0.33f; // TODO: change!
+            GameSettings.GameSettings.MusicVolume = 0.2f; // TODO: Adjustable by player?
+            GameSettings.GameSettings.SfxVolume = 0.33f; // TODO: Adjustable by player?
 
             base.Initialize();
             

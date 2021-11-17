@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using FZtarOGL.Asset;
 using FZtarOGL.Box;
 using FZtarOGL.Utilities;
@@ -14,60 +12,60 @@ namespace FZtarOGL.Entity
     {
         private Screen.Screen _screen;
 
-        private Matrix modelTrans;
-        private Vector3 modelScale;
-        private Vector3 modelPos;
-        private Vector3 modelRot;
+        private Matrix _modelTrans;
+        private Vector3 _modelScale;
+        private Vector3 _modelPos;
+        private Vector3 _modelRot;
 
         private Model _model;
         
         private List<BoundingBoxFiltered> boxfes;
-        public BoundingBoxFiltered boxf; // test!
-        private const float boxfMinX = 1f, boxfMinY = 1f, boxfMinZ = 1f;
-        private const float boxfMaxX = 1f, boxfMaxY = 1f, boxfMaxZ = 1f;
-        private Vector3 min;
-        private Vector3 max;
+        private BoundingBoxFiltered boxf;
+        private const float BoxfMinX = 1f, BoxfMinY = 1f, BoxfMinZ = 1f;
+        private const float BoxfMaxX = 1f, BoxfMaxY = 1f, BoxfMaxZ = 1f;
+        private Vector3 _min;
+        private Vector3 _max;
         
-        private Vector3[] rayColors;
-        private Vector3 currentRayColor;
+        private Vector3[] _rayColors;
+        private Vector3 _currentRayColor;
 
         //private Random rnd = new Random();
-        private int rayColorOrdered;
-        private float timerRayColor;
+        private int _rayColorOrdered;
+        private float _timerRayColor;
 
         public PlayerRay(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 rotation)
         {
             _screen = screen;
-            modelPos = position;
+            _modelPos = position;
             //modelRot = rotation;
-            modelRot = rotation;
+            _modelRot = rotation;
 
             _model = assMan.RayModel;
 
-            modelScale = Vector3.One;
+            _modelScale = Vector3.One;
             const float rayOffsetFromShip = 1;
-            modelPos.Z -= rayOffsetFromShip;
-            modelTrans = Matrix.CreateScale(modelScale) *
-                         Matrix.CreateRotationX(modelRot.X) *
-                         Matrix.CreateRotationY(modelRot.Y) *
-                         Matrix.CreateRotationZ(modelRot.Z) *
-                         Matrix.CreateTranslation(modelPos);
+            _modelPos.Z -= rayOffsetFromShip;
+            _modelTrans = Matrix.CreateScale(_modelScale) *
+                         Matrix.CreateRotationX(_modelRot.X) *
+                         Matrix.CreateRotationY(_modelRot.Y) *
+                         Matrix.CreateRotationZ(_modelRot.Z) *
+                         Matrix.CreateTranslation(_modelPos);
 
             boxfes = new List<BoundingBoxFiltered>();
             
-            min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
-            max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
-            boxf = new BoundingBoxFiltered(this, min, max, BoxFilters.FilterPlayerRay, BoxFilters.MaskPlayerRay);
+            _min = new Vector3(_modelTrans.Translation.X - BoxfMinX, _modelTrans.Translation.Y - BoxfMinY,_modelTrans.Translation.Z - BoxfMinZ);
+            _max = new Vector3(_modelTrans.Translation.X + BoxfMaxX, _modelTrans.Translation.Y + BoxfMaxY,_modelTrans.Translation.Z + BoxfMaxZ);
+            boxf = new BoundingBoxFiltered(this, _min, _max, BoxFilters.FilterPlayerRay, BoxFilters.MaskPlayerRay);
             
             boxfes.Add(boxf);
 
             // shader colors
-            rayColors = new Vector3[4];
-            rayColors[0] = ModelColors.PlayerRayColor1;
-            rayColors[1] = ModelColors.PlayerRayColor2;
-            rayColors[2] = ModelColors.PlayerRayColor3;
-            rayColors[3] = ModelColors.PlayerRayColor4;
-            currentRayColor = rayColors[0];
+            _rayColors = new Vector3[4];
+            _rayColors[0] = ModelColors.PlayerRayColor1;
+            _rayColors[1] = ModelColors.PlayerRayColor2;
+            _rayColors[2] = ModelColors.PlayerRayColor3;
+            _rayColors[3] = ModelColors.PlayerRayColor4;
+            _currentRayColor = _rayColors[0];
             
             SoundEffectInstance sfx = assMan.SfxRayShot.CreateInstance();
             sfx.Volume = GameSettings.GameSettings.SfxVolume;
@@ -76,33 +74,33 @@ namespace FZtarOGL.Entity
 
         public override void Tick(float dt)
         {
-            if (modelPos.Z < -210 || modelPos.Z > 10)
+            if (_modelPos.Z < -210 || _modelPos.Z > 10)
                 Destroy();
 
             if (!_screen.CurrentLevel.IsLocatedInSpace)
             {
-                if (modelPos.Y < 0)
+                if (_modelPos.Y < 0)
                     Destroy();                
             }
 
             float speed = 100;
             //modelPos.Z -= speedZ * dt;
 
-            modelPos.X += modelTrans.Forward.X * speed * dt;
-            modelPos.Y += modelTrans.Forward.Y * speed * dt;
-            modelPos.Z += modelTrans.Forward.Z * speed * dt;
+            _modelPos.X += _modelTrans.Forward.X * speed * dt;
+            _modelPos.Y += _modelTrans.Forward.Y * speed * dt;
+            _modelPos.Z += _modelTrans.Forward.Z * speed * dt;
 
             // trans
-            modelTrans = Matrix.CreateScale(modelScale) *
-                         Matrix.CreateRotationX(modelRot.X) *
-                         Matrix.CreateRotationY(modelRot.Y) *
-                         Matrix.CreateRotationZ(modelRot.Z) *
-                         Matrix.CreateTranslation(modelPos);
+            _modelTrans = Matrix.CreateScale(_modelScale) *
+                         Matrix.CreateRotationX(_modelRot.X) *
+                         Matrix.CreateRotationY(_modelRot.Y) *
+                         Matrix.CreateRotationZ(_modelRot.Z) *
+                         Matrix.CreateTranslation(_modelPos);
 
             // bb
-            min = new Vector3(modelTrans.Translation.X - boxfMinX, modelTrans.Translation.Y - boxfMinY,modelTrans.Translation.Z - boxfMinZ);
-            max = new Vector3(modelTrans.Translation.X + boxfMaxX, modelTrans.Translation.Y + boxfMaxY,modelTrans.Translation.Z + boxfMaxZ);
-            boxf.Box = new BoundingBox(min, max);
+            _min = new Vector3(_modelTrans.Translation.X - BoxfMinX, _modelTrans.Translation.Y - BoxfMinY,_modelTrans.Translation.Z - BoxfMinZ);
+            _max = new Vector3(_modelTrans.Translation.X + BoxfMaxX, _modelTrans.Translation.Y + BoxfMaxY,_modelTrans.Translation.Z + BoxfMaxZ);
+            boxf.Box = new BoundingBox(_min, _max);
 
             boxfes.Clear();
             boxfes.Add(boxf);
@@ -113,21 +111,21 @@ namespace FZtarOGL.Entity
             }
             
             // raycolor
-            timerRayColor += dt;
+            _timerRayColor += dt;
             const float timeRayColor = 0.025f;
-            bool changeColor = timerRayColor >= timeRayColor;
+            bool changeColor = _timerRayColor >= timeRayColor;
             if (changeColor)
             {
                 // ordered
-                rayColorOrdered++;
-                if (rayColorOrdered > rayColors.Length - 1) rayColorOrdered = 0;
-                currentRayColor = rayColors[rayColorOrdered];
+                _rayColorOrdered++;
+                if (_rayColorOrdered > _rayColors.Length - 1) _rayColorOrdered = 0;
+                _currentRayColor = _rayColors[_rayColorOrdered];
 
                 // random
                 //int rayColor = rnd.Next(0, rayColors.Length);
                 //currentRayColor = rayColors[rayColor];
 
-                timerRayColor = 0;
+                _timerRayColor = 0;
             }
             
             //Console.WriteLine("timer: " + timerRayColor);
@@ -139,10 +137,13 @@ namespace FZtarOGL.Entity
             switch (filter)
             {
                 case BoxFilters.FilterObstacle:
-                    ToDestroy = true;
+                    Destroy();
                     break;
                 case BoxFilters.FilterEnemyShip:
-                    ToDestroy = true;
+                    Destroy();
+                    break;
+                case BoxFilters.FilterEnemyTurret:
+                    Destroy();
                     break;
             }
         }
@@ -153,7 +154,7 @@ namespace FZtarOGL.Entity
 
         public override void Draw3D(float dt)
         {
-            _screen.DrawModelUnlitWithColor(_model, modelTrans, currentRayColor);
+            _screen.DrawModelUnlitWithColor(_model, _modelTrans, _currentRayColor);
         }
         
         public override void DrawBoundingBox()

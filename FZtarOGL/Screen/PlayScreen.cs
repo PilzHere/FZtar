@@ -70,14 +70,14 @@ namespace FZtarOGL.Screen
             //LoadLevel(new Level01(this, assMan, spriteBatch), Game.Window, spriteBatch, assMan);
         }
 
-        public void LoadLevel(level level, GameWindow window, SpriteBatch spriteBatch, AssetManager assMan)
+        public override void LoadLevel(int levelId)
         {
-            Entities.Clear();
+            base.LoadLevel(levelId);
             
-            var viewportAdapter = new BoxingViewportAdapter(window, _graphicsDevice, 256, 224);
+            var viewportAdapter = new BoxingViewportAdapter(Game.Window, _graphicsDevice, 256, 224);
             _camera = new OrthographicCamera(viewportAdapter);
 
-            Cam3d1 = new PerspectiveCamera(_graphicsDevice, window);
+            Cam3d1 = new PerspectiveCamera(_graphicsDevice, Game.Window);
             Cam3d1.Position = new Vector3(0, 1, 0);
             _cam3dPos = Cam3d1.Position;
             Cam3d1.LookAtDirection = Vector3.Forward;
@@ -87,10 +87,31 @@ namespace FZtarOGL.Screen
             Cam3d1.fieldOfViewDegrees = 45;
             Cam3d1.RotationRadiansPerSecond = 100f;
 
-            PlayerShip1 = new PlayerShip(this, spriteBatch, assMan, new Vector3(0, 0.5f, -6), Cam3d1);
+            PlayerShip1 = new PlayerShip(this, SpriteBatch, AssMan, new Vector3(0, 0.5f, -6), Cam3d1);
             Entities.Add(PlayerShip1);
+
+            // should work, but fast fix
             
-            CurrentLevel = level;
+            if (CurrentLevel != null) CurrentLevel.StopMusic();
+            
+            switch (levelId)
+            {
+                case 0:
+                    CurrentLevel = new LevelTitleScreen(this, AssMan, SpriteBatch);
+                    break;
+                case 1:
+                    CurrentLevel = new Level01(this, AssMan, SpriteBatch);
+                    break;
+                case 2:
+                    CurrentLevel = new Level02(this, AssMan, SpriteBatch);
+                    break;
+                case 3:
+                    CurrentLevel = new Level03(this, AssMan, SpriteBatch);
+                    break;
+                default:
+                    CurrentLevel = new LevelTitleScreen(this, AssMan, SpriteBatch);
+                    break;
+            }
         }
 
         public override void Reset()
@@ -133,138 +154,141 @@ namespace FZtarOGL.Screen
 
             if (PlayerShip1 != null)
             {
-                if (KeyboardExtended.GetState().IsKeyDown(Keys.W))
+                if (!CurrentLevel.LevelIsFinished)
                 {
-                    if (!GameSettings.GameSettings.InvertVerticalMovement)
+                    if (KeyboardExtended.GetState().IsKeyDown(Keys.W))
                     {
-                        nonLocalRotUpDown = -camSpeedY * nonLocalRotBoost * dt;
-                        Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
-                        nonLocalRotChanged = true;
-
-                        _cam3dPos.Y += camSpeedY * dt;
-
-                        CurrentLevel.BackgroundPos.Y += camSpeedY * backgroundPosBoostY * dt;
-                    }
-                    else
-                    {
-                        nonLocalRotUpDown = camSpeedY * nonLocalRotBoost * dt;
-                        Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
-                        nonLocalRotChanged = true;
-
-                        _cam3dPos.Y -= camSpeedY * dt;
-
-                        CurrentLevel.BackgroundPos.Y -= camSpeedY * backgroundPosBoostY * dt;
-                    }
-                }
-
-                if (KeyboardExtended.GetState().IsKeyDown(Keys.S))
-                {
-                    if (!GameSettings.GameSettings.InvertVerticalMovement)
-                    {
-                        nonLocalRotUpDown = camSpeedY * nonLocalRotBoost * dt;
-                        Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
-                        nonLocalRotChanged = true;
-
-                        _cam3dPos.Y -= camSpeedY * dt;
-
-                        CurrentLevel.BackgroundPos.Y -= camSpeedY * backgroundPosBoostY * dt;
-                    }
-                    else
-                    {
-                        nonLocalRotUpDown = -camSpeedY * nonLocalRotBoost * dt;
-                        Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
-                        nonLocalRotChanged = true;
-
-                        _cam3dPos.Y += camSpeedY * dt;
-
-                        CurrentLevel.BackgroundPos.Y += camSpeedY * backgroundPosBoostY * dt;
-                    }
-                }
-
-                if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
-                {
-                    if (Cam3d1.Up.X >= -camRotMaxX) Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
-                    CurrentLevel.BackgroundPos.X += camSpeedX * backgroundPosBoostX * dt;
-                }
-
-                if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
-                {
-                    if (Cam3d1.Up.X <= camRotMaxX) Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
-                    CurrentLevel.BackgroundPos.X -= camSpeedX * backgroundPosBoostX * dt;
-                }
-
-                // limit camera pos Y
-                if (_cam3dPos.Y > camPosMaxY)
-                {
-                    if (nonLocalRotChanged)
-                        Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
-
-                    _cam3dPos.Y = camPosMaxY;
-                    CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
-                }
-
-                if (_cam3dPos.Y < camPosMinY)
-                {
-                    if (nonLocalRotChanged)
-                        Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
-
-                    _cam3dPos.Y = camPosMinY;
-                    CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
-                }
-
-                float maxDistXCamPlayerShip = 1.5f;
-                float distanceXCamPlayerShip = PlayerShip1.ModelPos.X - _cam3dPos.X;
-                if (distanceXCamPlayerShip < -maxDistXCamPlayerShip)
-                {
-                    _cam3dPos.X -= camSpeedX * dt;
-                }
-                else if (distanceXCamPlayerShip > maxDistXCamPlayerShip)
-                {
-                    _cam3dPos.X += camSpeedX * dt;
-                }
-
-
-                // Rotate back towards center
-                if (!KeyboardExtended.GetState().IsKeyDown(Keys.A))
-                {
-                    if (Cam3d1.Up.X < 0)
-                    {
-                        if (Cam3d1.Up.X <= -camRotXResetTolerance)
+                        if (!GameSettings.GameSettings.InvertVerticalMovement)
                         {
-                            Cam3d1.RotateRollClockwise(gt, camRotRollBackSpeed);
+                            nonLocalRotUpDown = -camSpeedY * nonLocalRotBoost * dt;
+                            Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
+                            nonLocalRotChanged = true;
+
+                            _cam3dPos.Y += camSpeedY * dt;
+
+                            CurrentLevel.BackgroundPos.Y += camSpeedY * backgroundPosBoostY * dt;
                         }
                         else
                         {
-                            Cam3d1.Up = Vector3.Up;
+                            nonLocalRotUpDown = camSpeedY * nonLocalRotBoost * dt;
+                            Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
+                            nonLocalRotChanged = true;
+
+                            _cam3dPos.Y -= camSpeedY * dt;
+
+                            CurrentLevel.BackgroundPos.Y -= camSpeedY * backgroundPosBoostY * dt;
                         }
                     }
-                }
 
-                if (!KeyboardExtended.GetState().IsKeyDown(Keys.D))
-                {
-                    if (Cam3d1.Up.X > 0)
+                    if (KeyboardExtended.GetState().IsKeyDown(Keys.S))
                     {
-                        if (Cam3d1.Up.X >= camRotXResetTolerance)
+                        if (!GameSettings.GameSettings.InvertVerticalMovement)
                         {
-                            Cam3d1.RotateRollCounterClockwise(gt, camRotRollBackSpeed);
+                            nonLocalRotUpDown = camSpeedY * nonLocalRotBoost * dt;
+                            Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
+                            nonLocalRotChanged = true;
+
+                            _cam3dPos.Y -= camSpeedY * dt;
+
+                            CurrentLevel.BackgroundPos.Y -= camSpeedY * backgroundPosBoostY * dt;
                         }
                         else
                         {
-                            Cam3d1.Up = Vector3.Up;
+                            nonLocalRotUpDown = -camSpeedY * nonLocalRotBoost * dt;
+                            Cam3d1.NonLocalRotateUpOrDown(gt, nonLocalRotUpDown);
+                            nonLocalRotChanged = true;
+
+                            _cam3dPos.Y += camSpeedY * dt;
+
+                            CurrentLevel.BackgroundPos.Y += camSpeedY * backgroundPosBoostY * dt;
                         }
                     }
-                }
 
-                if (_cam3dPos.X < -camPosMaxX)
-                {
-                    _cam3dPos.X = -camPosMaxX;
-                    CurrentLevel.KeepOldBackgroundPositionX();
-                }
+                    if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
+                    {
+                        if (Cam3d1.Up.X >= -camRotMaxX) Cam3d1.RotateRollCounterClockwise(gt, camRotRollSpeed);
+                        CurrentLevel.BackgroundPos.X += camSpeedX * backgroundPosBoostX * dt;
+                    }
 
-                if (_cam3dPos.X > camPosMaxX)
-                {
-                    _cam3dPos.X = camPosMaxX;
-                    CurrentLevel.KeepOldBackgroundPositionX();
+                    if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
+                    {
+                        if (Cam3d1.Up.X <= camRotMaxX) Cam3d1.RotateRollClockwise(gt, camRotRollSpeed);
+                        CurrentLevel.BackgroundPos.X -= camSpeedX * backgroundPosBoostX * dt;
+                    }
+
+                    // limit camera pos Y
+                    if (_cam3dPos.Y > camPosMaxY)
+                    {
+                        if (nonLocalRotChanged)
+                            Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
+
+                        _cam3dPos.Y = camPosMaxY;
+                        CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
+                    }
+
+                    if (_cam3dPos.Y < camPosMinY)
+                    {
+                        if (nonLocalRotChanged)
+                            Cam3d1.NonLocalRotateUpOrDown(gt, -nonLocalRotUpDown);
+
+                        _cam3dPos.Y = camPosMinY;
+                        CurrentLevel.BackgroundPos.Y = CurrentLevel.BackgroundPosOld.Y;
+                    }
+
+                    float maxDistXCamPlayerShip = 1.5f;
+                    float distanceXCamPlayerShip = PlayerShip1.ModelPos.X - _cam3dPos.X;
+                    if (distanceXCamPlayerShip < -maxDistXCamPlayerShip)
+                    {
+                        _cam3dPos.X -= camSpeedX * dt;
+                    }
+                    else if (distanceXCamPlayerShip > maxDistXCamPlayerShip)
+                    {
+                        _cam3dPos.X += camSpeedX * dt;
+                    }
+
+
+                    // Rotate back towards center
+                    if (!KeyboardExtended.GetState().IsKeyDown(Keys.A))
+                    {
+                        if (Cam3d1.Up.X < 0)
+                        {
+                            if (Cam3d1.Up.X <= -camRotXResetTolerance)
+                            {
+                                Cam3d1.RotateRollClockwise(gt, camRotRollBackSpeed);
+                            }
+                            else
+                            {
+                                Cam3d1.Up = Vector3.Up;
+                            }
+                        }
+                    }
+
+                    if (!KeyboardExtended.GetState().IsKeyDown(Keys.D))
+                    {
+                        if (Cam3d1.Up.X > 0)
+                        {
+                            if (Cam3d1.Up.X >= camRotXResetTolerance)
+                            {
+                                Cam3d1.RotateRollCounterClockwise(gt, camRotRollBackSpeed);
+                            }
+                            else
+                            {
+                                Cam3d1.Up = Vector3.Up;
+                            }
+                        }
+                    }
+
+                    if (_cam3dPos.X < -camPosMaxX)
+                    {
+                        _cam3dPos.X = -camPosMaxX;
+                        CurrentLevel.KeepOldBackgroundPositionX();
+                    }
+
+                    if (_cam3dPos.X > camPosMaxX)
+                    {
+                        _cam3dPos.X = camPosMaxX;
+                        CurrentLevel.KeepOldBackgroundPositionX();
+                    }
                 }
             }
 
@@ -295,6 +319,8 @@ namespace FZtarOGL.Screen
             CheckCollisions(BoundingBoxesFiltered, dt);
             
             CurrentLevel.Tick(gt, dt);
+            
+            if (!_gameOver && CurrentLevel.LevelIsFinished) CurrentLevel.OnLevelFinished(dt);
             
             UpdateAllEntities(dt);
 
@@ -614,6 +640,11 @@ namespace FZtarOGL.Screen
             SpriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.None, RasterizerState.CullCounterClockwise,
                 null, _camera.GetViewMatrix());
+
+            if (!_gameOver && CurrentLevel.LevelIsFinished)
+            {
+                CurrentLevel.DrawOnLevelFinished(SpriteBatch, _font01_16, dt);
+            }
             
             // game over
             if (_gameOver)
@@ -625,13 +656,22 @@ namespace FZtarOGL.Screen
                 int posYGO = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
                                    SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
                                    _font01_16.GetStringRectangle(textGO).Height / 2f);
-                SpriteBatch.DrawString(_font01_16, textGO, new Vector2(posXGO, posYGO), Color.PaleGoldenrod);
+                SpriteBatch.DrawString(_font01_16, textGO, new Vector2(posXGO, posYGO), Color.DarkOrange);
+                
+                String textGO2 = "PRESS ESCAPE\nTO CONTINUE";
+                int posXGO2 = (int)(SpriteBatch.GraphicsDevice.Viewport.X +
+                                   SpriteBatch.GraphicsDevice.Viewport.Width / 2f -
+                                   _font01_16.GetStringRectangle(textGO2).Width / 2f);
+                int posYGO2 = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
+                                   SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
+                                   _font01_16.GetStringRectangle(textGO2).Height / 2f);
+                SpriteBatch.DrawString(_font01_16, textGO2, new Vector2(posXGO2, posYGO2 + 32), Color.DarkOrange);
             }
             
             if (PlayerShip1 != null)
             {
                 // player aim
-                PlayerShip1.DrawAim(dt);
+                if (!CurrentLevel.LevelIsFinished) PlayerShip1.DrawAim(dt);
 
                 // hp bg
                 int posXLife = SpriteBatch.GraphicsDevice.Viewport.X;
@@ -714,8 +754,6 @@ namespace FZtarOGL.Screen
 
         public override void DrawDebugGUI(GameTime gt)
         {
-            // BUG: LEVEL CHANGE = DEBUG DISPLAYS WRONG DATA!!!!
-            
             if (Game.GuiManager == null)
             {
                 // Debug gui

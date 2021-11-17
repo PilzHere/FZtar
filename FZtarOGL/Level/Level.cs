@@ -23,13 +23,17 @@ namespace FZtarOGL.Level
 
         public bool IsLocatedInSpace => isLocatedInSpace;
 
-        private float VirtualSpeedZStd = 33;
+        protected float LevelVirtualSpeedZ = 33;
         public float VirtualSpeedZ = 33; // Everything moves with this!
-        protected float VirtualSpeedZMax = 33;
-        protected float VirtualSpeedBoostZMax = 66;
+        //protected float VirtualSpeedZMax = 33;
+        //protected float VirtualSpeedBoostZMax = 66;
 
         protected float VirtualTravelDistance;
         protected float CurrentTravelSpeed;
+
+        protected bool levelIsFinished;
+
+        public bool LevelIsFinished => levelIsFinished;
 
         public float CurrentTravelSpeed1 => CurrentTravelSpeed;
 
@@ -103,7 +107,7 @@ namespace FZtarOGL.Level
         {
             if (MoveEverythingForward)
             {
-                if (!playerIsDead) VirtualSpeedZ = VirtualSpeedZStd;
+                if (!playerIsDead) VirtualSpeedZ = LevelVirtualSpeedZ;
             }
             else VirtualSpeedZ = 0;
             
@@ -167,5 +171,9 @@ namespace FZtarOGL.Level
         {
             BackgroundPos.Y = BackgroundPosOld.Y;
         }
+
+        public abstract void OnLevelFinished(float dt);
+        
+        public abstract void DrawOnLevelFinished(SpriteBatch sb, BitmapFont font, float dt);
     }
 }

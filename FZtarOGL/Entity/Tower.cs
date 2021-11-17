@@ -53,15 +53,19 @@ namespace FZtarOGL.Entity
         private float timerTowerSignalColor;
 
         private bool _useSignals;
+        private bool _isTowerTall;
 
-        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 modelColor, bool useSignals)
+        public Tower(Screen.Screen screen, AssetManager assMan, Vector3 position, Vector3 modelColor, bool useSignals, bool isTowerTall)
         {
             _screen = screen;
             _assMan = assMan;
             _modelColor = modelColor;
             _useSignals = useSignals;
+            _isTowerTall = isTowerTall;
 
-            _model = _assMan.TowerModel;
+            if (_isTowerTall) _model = _assMan.TowerTallModel;
+            else _model = _assMan.TowerModel;
+            
             _towerSignalMesh01 = _model.Meshes[1];
             _towerSignalMesh02 = _model.Meshes[2];
             _towerSignalMesh03 = _model.Meshes[3];
@@ -91,9 +95,12 @@ namespace FZtarOGL.Entity
             boxf03 = new BoundingBoxFiltered(this, min03, max03, BoxFilters.FilterObstacle, BoxFilters.MaskObstacle);
             
             boxfes.Add(boxf01);
-            boxfes.Add(boxf02);
-            boxfes.Add(boxf03);
-            
+            if (!_isTowerTall)
+            {
+                boxfes.Add(boxf02);
+                boxfes.Add(boxf03);
+            }
+
             // shader colors
             towerSignalColors = new Vector3[6];
             towerSignalColors[0] = ModelColors.Red2;
@@ -136,8 +143,12 @@ namespace FZtarOGL.Entity
 
             boxfes.Clear();
             boxfes.Add(boxf01);
-            boxfes.Add(boxf02);
-            boxfes.Add(boxf03);
+            if (!_isTowerTall)
+            {
+                boxfes.Add(boxf02);
+                boxfes.Add(boxf03);
+            }
+            
             
             foreach (var boxf in boxfes)
             {

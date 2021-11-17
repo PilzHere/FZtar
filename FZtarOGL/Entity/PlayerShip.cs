@@ -42,6 +42,8 @@ namespace FZtarOGL.Entity
         public int Power => _power;
         public Model Model => _model;
 
+        private bool shieldActive;
+
         //private BoundingBox _box;
         private List<BoundingBoxFiltered> boxfes;
 
@@ -51,7 +53,7 @@ namespace FZtarOGL.Entity
         //private const float playerShipRotZSpeed = 2;
         private float rotXSpeed = 1;
         private float rotYSpeed = 1;
-        private const float speedY = 5;
+        private const float speedY = 5.5f; // was 5
         private float speedZ = 0; // 33
 
         private float rotXMaxAngle = 0.25f;
@@ -80,6 +82,10 @@ namespace FZtarOGL.Entity
         private bool gotHit;
         private float gotHitTimer;
         private bool toRenderShip = true;
+
+        private float levelFinishedSpeed;
+
+        private float shieldTimer;
 
         public PlayerShip(Screen.Screen screen, SpriteBatch spriteBatch, AssetManager assMan, Vector3 position,
             PerspectiveCamera cam)
@@ -125,100 +131,156 @@ namespace FZtarOGL.Entity
             currentThrusterColor = thrusterColors[0];
         }
 
-        private bool keyUpIsPressed;
-        private bool keySpaceIsPressed;
+        private bool _keyFireIsPressed;
+        private bool _keyShieldIsPressed;
+        private bool _keyPauseSpeedIsPressed;
 
-        private float rotationGlobalY;
+        private float _rotationGlobalY;
 
-        private Keys keyMoveUp = Keys.W;
-        private Keys keyMoveDown = Keys.S;
+        private Keys _keyMoveUp = Keys.W;
+        private Keys _keyMoveDown = Keys.S;
 
         public void Input(GameTime gt, float dt)
         {
-            if (GameSettings.GameSettings.InvertVerticalMovement)
+            if (!_screen.CurrentLevel.LevelIsFinished)
             {
-                keyMoveUp = Keys.S;
-                keyMoveDown = Keys.W;
+                if (GameSettings.GameSettings.InvertVerticalMovement)
+                {
+                    _keyMoveUp = Keys.S;
+                    _keyMoveDown = Keys.W;
+                }
+                else
+                {
+                    _keyMoveUp = Keys.W;
+                    _keyMoveDown = Keys.S;
+                }
+
+                // TODO: For testing!
+                /*if (KeyboardExtended.GetState().IsKeyUp(Keys.Space))
+                {
+                    _keyPauseSpeedIsPressed = false;
+                }
+
+                if (!_keyPauseSpeedIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Space))
+                {
+                    _screen.CurrentLevel.MoveEverythingForward1 = !_screen.CurrentLevel.MoveEverythingForward1;
+                    _keyPauseSpeedIsPressed = true;
+                }*/
+                // TEsting end
+
+                if (KeyboardExtended.GetState().IsKeyUp(Keys.Up))
+                {
+                    _keyFireIsPressed = false;
+                }
+
+                if (!_keyFireIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Up))
+                {
+                    _screen._Entities.Add(new PlayerRay(_screen, _assMan, ModelPos, ModelRot));
+                    _keyFireIsPressed = true;
+                }
+
+                if (KeyboardExtended.GetState().IsKeyUp(Keys.Left))
+                {
+                    _keyShieldIsPressed = false;
+                }
+
+                if (!_keyShieldIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Left))
+                {
+                    ActivateShield();
+                    _keyShieldIsPressed = true;
+                }
+
+                float rotXSpeedBoost = 1;
+
+                if (KeyboardExtended.GetState().IsKeyDown(_keyMoveUp))
+                {
+                    if (ModelRot.X < 0) ModelRot.X += rotXSpeed * rotXSpeedBoost * dt;
+                    else ModelRot.X += rotXSpeed * dt;
+
+                    ModelPos.Y += speedY * dt;
+                }
+
+                if (KeyboardExtended.GetState().IsKeyDown(_keyMoveDown))
+                {
+                    if (ModelRot.X > 0) ModelRot.X -= rotXSpeed * rotXSpeedBoost * dt;
+                    else ModelRot.X -= rotXSpeed * dt;
+
+                    ModelPos.Y -= speedY * dt;
+                }
+
+                const float rotYSpeedBoost = 1;
+
+                if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
+                {
+                    ModelPos.X -= speedX * dt;
+
+                    if (ModelRot.Y < 0) ModelRot.Y += rotYSpeed * rotYSpeedBoost * dt;
+                    else ModelRot.Y += rotYSpeed * dt;
+                    //playerShipModelRot.Z += playerShipRotZSpeed * dt;
+
+                    _rotationGlobalY -= 1 * dt;
+
+                    ModelRot.Z += 3 * dt;
+                }
+
+                if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
+                {
+                    ModelPos.X += speedX * dt;
+
+                    if (ModelRot.Y > 0) ModelRot.Y -= rotYSpeed * rotYSpeedBoost * dt;
+                    else ModelRot.Y -= rotYSpeed * dt;
+                    //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
+
+                    _rotationGlobalY += 1 * dt;
+
+                    ModelRot.Z -= 3 * dt;
+                }
             }
             else
             {
-                keyMoveUp = Keys.W;
-                keyMoveDown = Keys.S;
+                levelFinishedSpeed += 24 * dt;
+                if (levelFinishedSpeed > 200) levelFinishedSpeed = 200;
+                ModelPos.Z -= levelFinishedSpeed * dt;
             }
+        }
 
-            // TODO: For testing!
-            if (KeyboardExtended.GetState().IsKeyUp(Keys.Space))
+        private void ActivateShield()
+        {
+            if (!shieldActive && _power == _maxPower)
             {
-                keySpaceIsPressed = false;
-            }
-
-            if (!keySpaceIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Space))
-            {
-                _screen.CurrentLevel.MoveEverythingForward1 = !_screen.CurrentLevel.MoveEverythingForward1;
-                keySpaceIsPressed = true;
-            }
-            // TEsting end
-
-            if (KeyboardExtended.GetState().IsKeyUp(Keys.Up))
-            {
-                keyUpIsPressed = false;
-            }
-
-            if (!keyUpIsPressed && KeyboardExtended.GetState().IsKeyDown(Keys.Up))
-            {
-                _screen._Entities.Add(new PlayerRay(_screen, _assMan, ModelPos, ModelRot));
-                keyUpIsPressed = true;
-            }
-
-            float rotXSpeedBoost = 1;
-
-            if (KeyboardExtended.GetState().IsKeyDown(keyMoveUp))
-            {
-                if (ModelRot.X < 0) ModelRot.X += rotXSpeed * rotXSpeedBoost * dt;
-                else ModelRot.X += rotXSpeed * dt;
-
-                ModelPos.Y += speedY * dt;
-            }
-
-            if (KeyboardExtended.GetState().IsKeyDown(keyMoveDown))
-            {
-                if (ModelRot.X > 0) ModelRot.X -= rotXSpeed * rotXSpeedBoost * dt;
-                else ModelRot.X -= rotXSpeed * dt;
-
-                ModelPos.Y -= speedY * dt;
-            }
-
-            const float rotYSpeedBoost = 1;
-
-            if (KeyboardExtended.GetState().IsKeyDown(Keys.A))
-            {
-                ModelPos.X -= speedX * dt;
-
-                if (ModelRot.Y < 0) ModelRot.Y += rotYSpeed * rotYSpeedBoost * dt;
-                else ModelRot.Y += rotYSpeed * dt;
-                //playerShipModelRot.Z += playerShipRotZSpeed * dt;
-
-                rotationGlobalY -= 1 * dt;
-
-                ModelRot.Z += 3 * dt;
-            }
-
-            if (KeyboardExtended.GetState().IsKeyDown(Keys.D))
-            {
-                ModelPos.X += speedX * dt;
-
-                if (ModelRot.Y > 0) ModelRot.Y -= rotYSpeed * rotYSpeedBoost * dt;
-                else ModelRot.Y -= rotYSpeed * dt;
-                //playerShipModelRot.Z -= playerShipRotZSpeed * dt;
-
-                rotationGlobalY += 1 * dt;
-
-                ModelRot.Z -= 3 * dt;
+                SoundEffectInstance sfx = _assMan.SfxShield.CreateInstance();
+                sfx.Volume = GameSettings.GameSettings.SfxVolume;
+                sfx.Play();
+                
+                ReducePower(_maxPower);
+                shieldActive = true;
             }
         }
 
         public override void Tick(float dt)
         {
+            if (shieldActive)
+            {
+                float shieldTime = 5;
+                shieldTimer += dt;
+                if (shieldTimer >= shieldTime)
+                {
+                    foreach (var mesh in _model.Meshes)
+                    {
+                        foreach (BasicEffect effect in mesh.Effects)
+                        {
+                            // Reset color and shit
+                            effect.TextureEnabled = true;
+                            effect.DiffuseColor = new Vector3(1, 1, 1);
+                        }
+                    }
+
+                    shieldActive = false;
+                    shieldTimer = 0;
+                }
+            }
+
+
             if (gotHit)
             {
                 float gotHitCooldown = 1.33f;
@@ -230,6 +292,7 @@ namespace FZtarOGL.Entity
                     gotHit = false;
                 }
             }
+
 
             //speedZ = _screen.CurrentLevel.VirtualSpeedZ;
 
@@ -378,7 +441,7 @@ namespace FZtarOGL.Entity
             switch (filter)
             {
                 case BoxFilters.FilterObstacle:
-                    if (!gotHit)
+                    if (!gotHit && !shieldActive)
                     {
                         TakeDamage(10);
                         gotHit = true;
@@ -392,7 +455,7 @@ namespace FZtarOGL.Entity
                     IncreasePower(10);
                     break;
                 case BoxFilters.FilterEnemyShip:
-                    if (!gotHit)
+                    if (!gotHit && !shieldActive)
                     {
                         TakeDamage(10);
                         gotHit = true;
@@ -400,7 +463,7 @@ namespace FZtarOGL.Entity
 
                     break;
                 case BoxFilters.FilterEnemyRay:
-                    if (!gotHit)
+                    if (!gotHit && !shieldActive)
                     {
                         TakeDamage(10);
                         gotHit = true;
@@ -420,7 +483,7 @@ namespace FZtarOGL.Entity
         {
             if (_hp > 0) _hp -= amount;
             if (_hp < 0) _hp = 0;
-            
+
             SoundEffectInstance sfx = _assMan.SfxPlayerHit.CreateInstance();
             sfx.Volume = GameSettings.GameSettings.SfxVolume;
             sfx.Play();
@@ -459,7 +522,8 @@ namespace FZtarOGL.Entity
 
             if (toRenderShip)
             {
-                _screen.DrawModel(_model, ModelTrans);
+                if (!shieldActive) _screen.DrawModel(_model, ModelTrans);
+                else _screen.DrawModelMeshUnlitWithColor(_model.Meshes[0], ModelTrans, currentThrusterColor);
 
                 _screen.DrawModelMeshUnlitWithColor(_thrusterMesh, ModelTrans, currentThrusterColor);
             }
@@ -480,13 +544,13 @@ namespace FZtarOGL.Entity
         public override void Destroy()
         {
             base.Destroy();
-            
+
             ReducePower(_maxPower);
-            
+
             SoundEffectInstance sfx = _assMan.SfxPlayerDeath.CreateInstance();
             sfx.Volume = GameSettings.GameSettings.SfxVolume;
             sfx.Play();
-            
+
             _screen._EntitiesToAdd.Add(new Explosion01(_screen, _assMan, ModelPos));
         }
     }

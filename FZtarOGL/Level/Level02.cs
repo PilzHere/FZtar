@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using System.Threading.Tasks.Dataflow;
 using FZtarOGL.Asset;
@@ -7,6 +8,7 @@ using FZtarOGL.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
+using MonoGame.Extended.BitmapFonts;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 
@@ -127,6 +129,8 @@ namespace FZtarOGL.Level
                     dotPosX += dotPosOffsetX;
                 }
             }
+
+            LevelVirtualSpeedZ *= 1.15f;
             
             screen.SetContinueLevel(ContinueLevel.Level02);
         }
@@ -194,62 +198,189 @@ namespace FZtarOGL.Level
                     case 0:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.Gray, true));
-
-                        break;
-                    case 1:
-
-                        // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
-
-                        // pickus
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -200)));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -240)));
-                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -280)));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -200), ModelColors.Gray, true, true));
 
                         // messages
                         Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
                             AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "This is the right\nway.\nWow!\nWhat a view...", 3));
+                        // messages
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet03Tex, AssMan.SfxMessage, AssMan.Font02_08,
                             "Hey! I can see my\nhouse from here!", 3));
+                        break;
+                    case 1:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet01Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "Incoming enemies,\nkamikaze miners again!", 3));
+                        
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(10, 15, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-7, 10, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 6, -300), true));
+                        
+                        // obstacles
+                        //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true, true));
+                        //Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true, true));
+
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 6, -200)));
+                        
+                        // pickus
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -200)));
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -240)));
+                        //Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 5, -280)));
                         break;
                     case 2:
 
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(13, 15, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-13, 10, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(5, 6, -300), true));
+                        
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
+                        /*Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true, true));*/
 
                         // pickups
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-3, 3, -200)));
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 3, -240)));
-                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(3, 3, -280)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(-5, 4, -200)));
+                        
 
                         break;
                     case 3:
 
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true, true));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -250), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.White, true, true));
 
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(4, 5, -250)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(-4, 5, -250)));
+                        
                         break;
                     case 4:
 
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 7, -197)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 7, -197)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 3, -197)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 3, -197)));
+                        
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 7f, -247)));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 3f, -247)));
+                        
                         // obstacles
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-9, 0, -200), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(5, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-5, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(3, 0, -250), ModelColors.Gray, true));
-                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-3, 0, -250), ModelColors.Gray, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -250), ModelColors.Gray, true, true));
 
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 4, -230)));
+                        
+                        break;
+                    case 5:
+                        // towers'n'haitch
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-4.5f, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(4.5f, 0, -200), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -200 -0.1f), ModelColors.Orange));
+                        
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 7.5f, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1.5f, -200)));
+                        
+                        // towers'n'haitch
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-4.5f, 0, -250), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(4.5f, 0, -250), ModelColors.Gray, true, true));
+                        Screen._Entities.Add(new Haitch(Screen, AssMan, new Vector3(0, 0, -250 -0.1f), ModelColors.Red1));
+                        
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 7.5f, -250)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1.5f, -250)));
+                        break;
+                    case 6:
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-6f, 0, -200), ModelColors.Orange, true, true));
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(6, 0, -200), ModelColors.LightBlue, true, true));
+                        
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(-9, 5f, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(-9, 8, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(-9, 1f, -200)));
+                        
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(9, 5f, -200)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(9, 8, -200)));
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(9, 1f, -200)));
+                        
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-13, 10, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(13, 7, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-2, 15, -350), true));
+                        
+                        break;
+                    case 7:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet03Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "Who built these\ntowers anyway?!", 3));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0, 0, -200), ModelColors.DarkGray, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 7f, -197)));
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 7f, -198)));
+                        
+                        Screen._Entities.Add(new PowerRing(Screen, AssMan, new Vector3(0, 5f, -225)));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(0f, 0, -250), ModelColors.DarkGray, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 7f, -247)));
+                        //Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(0, 7f, -248)));
+                        break;
+                    case 8:
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(10, 0, -200), ModelColors.Red1, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(10, 7f, -197)));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-10, 0, -200), ModelColors.Red1, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-10, 7f, -197)));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(7, 0, -250), ModelColors.Green1, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(7, 7f, -247)));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-7, 0, -230), ModelColors.Green1, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-7, 7f, -227)));
+                        
+                        Screen._Entities.Add(new Tower(Screen, AssMan, new Vector3(-0, 0, -275), ModelColors.Blue1, true, true));
+                        Screen._Entities.Add(new Turret(Screen, AssMan, new Vector3(-0, 7f, -272)));
+                        break;
+                    case 9:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet02Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "It's quite...\nToo quiet...", 3));
+                        
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 1, -200)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 4, -230)));
+                        Screen._Entities.Add(new HealthRing(Screen, AssMan, new Vector3(0, 7, -270)));
+                        break;
+                    case 10:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet03Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "Here they come!", 3));
+                        
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-1, 15, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-4, 10, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(5, 6, -300), true));
+                        
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 0, -225), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-10, 5, -275), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(3, 2, -350), true));
+                        break;
+                    case 11:
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-10, 15, -200), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(10, 10, -250), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(5, 6, -300), true));
+                        
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(0, 0, -225), true));
+                        Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(-10, 5, -275), true));
+                        //Screen._Entities.Add(new EnemyShip(Screen, AssMan, new Vector3(3, 2, -350), true));
+                        break;
+                    case 12:
+                        Messages1.Add(new Message.Message(AssMan.AvatarFrameTex, AssMan.AvatarFrameBgTex,
+                            AssMan.AvatarDrInet03Tex, AssMan.SfxMessage, AssMan.Font02_08,
+                            "This cant be!?\nI'm picking up signals\nfrom outer space!\nLet's go!", 3.5f));
+                        
+                        levelIsFinished = true;
                         break;
                 }
             }
@@ -307,6 +438,36 @@ namespace FZtarOGL.Level
             SpriteBatch.Draw(BackgroundTexture, BackgroundPosInt, null, Color.White, rotation, BackgroundOrigin,
                 Vector2.One,
                 SpriteEffects.None, 0);
+        }
+
+        private float _loadNextLevelTimer;
+        
+        public override void OnLevelFinished(float dt)
+        {
+            var nextLevelTime = 5;
+            _loadNextLevelTimer += dt;
+            if (_loadNextLevelTimer >= nextLevelTime) Screen.LoadLevel(3);
+        }
+
+        public override void DrawOnLevelFinished(SpriteBatch sb, BitmapFont font, float dt)
+        {
+            String textLevelFinished = "The sky is the limit?";
+            int posXLf = (int)(SpriteBatch.GraphicsDevice.Viewport.X +
+                               SpriteBatch.GraphicsDevice.Viewport.Width / 2f -
+                               font.GetStringRectangle(textLevelFinished).Width / 2f);
+            int posYLf = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
+                               SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
+                               font.GetStringRectangle(textLevelFinished).Height / 2f);
+            SpriteBatch.DrawString(font, textLevelFinished, new Vector2(posXLf, posYLf - 16), Color.Red);
+            
+            String textLevelFinished2 = "It continues in\nouter space!";
+            int posXLf2 = (int)(SpriteBatch.GraphicsDevice.Viewport.X +
+                                SpriteBatch.GraphicsDevice.Viewport.Width / 2f -
+                                font.GetStringRectangle(textLevelFinished2).Width / 2f);
+            int posYLf2 = (int)(SpriteBatch.GraphicsDevice.Viewport.Y +
+                                SpriteBatch.GraphicsDevice.Viewport.Height / 2f -
+                                font.GetStringRectangle(textLevelFinished2).Height / 2f);
+            SpriteBatch.DrawString(font, textLevelFinished2, new Vector2(posXLf2, posYLf2 + 16), Color.Red);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace FZtarOGL.Entity
 
         private Model _model;
 
-        private bool scaleUp = true;
+        private bool _scaleUp = true;
 
         private Screen.Screen _screen;
 
@@ -46,13 +46,13 @@ namespace FZtarOGL.Entity
             if (_modelPos.Z > 10) Destroy();
 
             float scaleSpeed = 2f;
-            if (scaleUp)
+            if (_scaleUp)
             {
                 _modelScale.X += scaleSpeed * dt;
                 _modelScale.Y += scaleSpeed * dt;
                 _modelScale.Z += scaleSpeed * dt;
 
-                if (_modelScale.X >= 1) scaleUp = false;
+                if (_modelScale.X >= 1) _scaleUp = false;
             }
             else
             {
